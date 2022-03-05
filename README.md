@@ -8,6 +8,10 @@ For testing:
 ```
 nosetests
 ```
+For unit test:
+```
+python -m unittest discover
+``` 
 For routes check:
 ```
 flask routes
