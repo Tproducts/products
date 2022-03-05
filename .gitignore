@@ -4,13 +4,15 @@ Thumbs.db
 
 # VS Code
 .vscode/
-.noseids
-.sonarlint/
 
 # Vagrant
 .vagrant
 
+# TDD
+unittests.xml
+
 # databases
+*.db
 db/*
 !db/.keep
 
@@ -57,7 +59,6 @@ htmlcov/
 .coverage.*
 .cache
 nosetests.xml
-.noseids
 coverage.xml
 *,cover
 .hypothesis/

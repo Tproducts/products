@@ -8,13 +8,12 @@
 Vagrant.configure(2) do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  # config.vm.box = "ubuntu/focal64"
   config.vm.box = "bento/ubuntu-21.04"
   config.vm.hostname = "ubuntu"
 
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 8000, host: 8000, host_ip: "127.0.0.1"
+  config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -23,10 +22,10 @@ Vagrant.configure(2) do |config|
   # Mac users can comment this next line out but
   # Windows users need to change the permission of files and directories
   # so that nosetests runs without extra arguments.
-  config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=755,fmode=644"]
+  config.vm.synced_folder ".", "/vagrant", mount_options: ["dmode=775,fmode=664"]
 
   ############################################################
-  # Provider for VirtuaBox on Intel
+  # Provider for VirtualBox
   ############################################################
   config.vm.provider "virtualbox" do |vb|
     # Customize the amount of memory on the VM:
@@ -42,7 +41,8 @@ Vagrant.configure(2) do |config|
   ############################################################
   config.vm.provider :docker do |docker, override|
     override.vm.box = nil
-    docker.image = "rofrano/vagrant-provider:ubuntu"
+    override.vm.hostname = "debian"
+    docker.image = "rofrano/vagrant-provider:debian"
     docker.remains_running = true
     docker.has_ssh = true
     docker.privileged = true
@@ -51,10 +51,6 @@ Vagrant.configure(2) do |config|
     # Uncomment to force arm64 for testing images on Intel
     # docker.create_args = ["--cgroupns=host", "--platform=linux/arm64"]     
   end
-
-  ######################################################################
-  # Copy files to personalize the environment
-  ######################################################################
 
   # Copy your .gitconfig file so that your git credentials are correct
   if File.exists?(File.expand_path("~/.gitconfig"))
@@ -80,8 +76,11 @@ Vagrant.configure(2) do |config|
     echo "****************************************"
     # Install Python 3 and dev tools 
     apt-get update
-    apt-get install -y git vim tree python3 python3-pip python3-venv
+    apt-get install -y git tree wget vim python3-dev python3-pip python3-venv
     apt-get -y autoremove
+    
+    # Need PostgreSQL development library to compile on arm64
+    apt-get install -y libpq-dev
     
     # Create a Python3 Virtual Environment and Activate it in .profile
     sudo -H -u vagrant sh -c 'python3 -m venv ~/venv'
@@ -93,13 +92,13 @@ Vagrant.configure(2) do |config|
   SHELL
 
   ######################################################################
-  # Add Redis 6 docker container for database
+  # Add PostgreSQL docker container
   ######################################################################
-  # docker run -d --name redis -p 6379:6379 -v redis:/data redis:6-alpine
+  # docker run -d --name postgres -p 5432:5432 -v psql_data:/var/lib/postgresql/data postgres
   config.vm.provision :docker do |d|
-    d.pull_images "redis:6-alpine"
-    d.run "redis:6-alpine",
-      args: "-d --name redis -p 6379:6379 -v redis:/data"    
+    d.pull_images "postgres:alpine"
+    d.run "postgres:alpine",
+       args: "-d --name postgres -p 5432:5432 -v psql_data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres"
   end
 
 end
