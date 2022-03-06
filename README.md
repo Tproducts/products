@@ -2,7 +2,7 @@ The main skeleton of product service
 
 Test case can be ran with:
 ```
-    nosetests
+nosetests
 ```
 Unit test can be ran with:
 ```

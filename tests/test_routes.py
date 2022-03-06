@@ -144,11 +144,6 @@ class TestProductServer(unittest.TestCase):
         resp = self.app.post(BASE_URL, json={}, content_type=CONTENT_TYPE_JSON)
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_create_product_no_content_type(self):
-    #     """Create a Product with no content type"""
-    #     resp = self.app.post(BASE_URL)
-    #     self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-
     def test_update_product(self):
         """Update an existing Product"""
         # create a product to update
