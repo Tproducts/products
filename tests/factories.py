@@ -11,3 +11,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""
+Test Factory to make fake objects for testing
+"""
+import factory
+from factory.fuzzy import FuzzyChoice
+from service.models import Product
+
+
+class ProductFactory(factory.Factory):
+    """Creates fake products that you don't have to feed"""
+
+    class Meta:
+        model = Product
+
+    id = factory.Sequence(lambda n: n)
+    name = FuzzyChoice(choices=["iPhone13", "iPad", "Macbook Air", "Macbook Pro"])
+    description = factory.Faker("word")
+    price = FuzzyChoice(choices=[100, 200, 300, 400])
