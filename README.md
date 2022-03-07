@@ -10,10 +10,7 @@ python -m unittest discover
 ```
 App running:
 ```
-// method 1
-flask rtun
-// method 2
-honcho start
+flask run
 ```
 Routers check:
 ```
