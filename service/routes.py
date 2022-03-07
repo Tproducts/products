@@ -1,7 +1,7 @@
 """
-Product Store Service
+Product Service
 
-Paths:
+Paths (Based on RESTful standard):
 ------
 GET /products - Returns a list all of the Products
 GET /products/{id} - Returns the Product with a given id number
@@ -27,9 +27,10 @@ def index():
     app.logger.info("Request for Root URL")
     return (
         jsonify(
-            name="Product Demo REST API Service",
+            name="Product REST API Service",
             version="1.0",
-            paths=url_for("list_products", _external=True),
+            list_products=url_for("list_products", _external=True),
+            create_products="You can run 'post.py' program under 'tests' folder to create some new products"
         ),
         status.HTTP_200_OK,
     )
@@ -74,7 +75,7 @@ def get_products(product_id):
 
 
 ######################################################################
-# ADD A NEW PRODUCT
+# CREATE A NEW PRODUCT
 ######################################################################
 @app.route("/products", methods=["POST"])
 def create_products():
@@ -141,7 +142,6 @@ def delete_products(product_id):
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
 
 def check_content_type(media_type):
     """Checks that the media type is correct"""
