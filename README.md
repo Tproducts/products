@@ -15,7 +15,7 @@ flask rtun
 // method 2
 honcho start
 ```
-Routers check:
+All Available Routers check:
 ```
 flask routes
 ```

@@ -17,6 +17,7 @@ price (Integer) - The price of the product
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 
 logger = logging.getLogger("flask.app")
 
@@ -99,6 +100,7 @@ class Product(db.Model):
         try:
             self.name = data["name"]
             self.description = data["description"]
+            # Check the validity of the price attribute
             if isinstance(data["price"], int):
                 self.price = data["price"]
             else:
@@ -106,7 +108,6 @@ class Product(db.Model):
                     "Invalid type for boolean [price]: "
                     + str(type(data["price"]))
                 )
-            # self.price = data["price"]
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
@@ -132,10 +133,10 @@ class Product(db.Model):
 
         """
         logger.info("Initializing database")
-        # This is where we initialize SQLAlchemy from the Flask app
+        # Initialize SQLAlchemy from the Flask app
         db.init_app(app)
         app.app_context().push()
-        db.create_all()  # make our sqlalchemy tables
+        db.create_all()  # make sqlalchemy tables
 
     @classmethod
     def all(cls) -> list:

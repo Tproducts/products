@@ -1,12 +1,13 @@
 """
-Product API Service Test Suite
+Test cases for Product API Service
 
-Test cases can be run with the following:
-  nosetests -v --with-spec --spec-color
-  coverage report -m
+Test cases can be run with:
+    nosetests
   
 """
 
+from crypt import methods
+import json
 import os
 import logging
 import unittest
@@ -17,7 +18,7 @@ from service.models import db, init_db
 from service.routes import app
 from .factories import ProductFactory
 
-# Disable all but ciritcal errors during normal test run
+# Disable all but critical errors during normal test run
 # uncomment for debugging failing tests
 logging.disable(logging.CRITICAL)
 
@@ -33,7 +34,7 @@ CONTENT_TYPE_JSON = "application/json"
 #  T E S T   C A S E S
 ######################################################################
 class TestProductServer(unittest.TestCase):
-    """Product Server Tests"""
+    """Test Cases for Product Service"""
 
     @classmethod
     def setUpClass(cls):
@@ -81,7 +82,7 @@ class TestProductServer(unittest.TestCase):
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data["name"], "Product Demo REST API Service")
+        self.assertEqual(data["name"], "Product REST API Service")
 
     def test_get_product_list(self):
         """Get a list of Products"""
@@ -102,10 +103,22 @@ class TestProductServer(unittest.TestCase):
         data = resp.get_json()
         self.assertEqual(data["name"], test_product.name)
 
-    def test_get_product_not_found(self):
-        """Get a Product thats not found"""
-        resp = self.app.get("/products/0")
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+    def test_get_product_with_name(self):
+        test_product = ProductFactory()
+        logging.debug(test_product)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        test_product = resp.get_json()
+        resp = self.app.get(
+            "/products?name={}".format(test_product['name']), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        print('Data:', data[0]['name'])
+        self.assertEqual(data[0]["name"], test_product['name'])
 
     def test_create_product(self):
         """Create a new Product"""
@@ -139,11 +152,6 @@ class TestProductServer(unittest.TestCase):
             new_product["price"], test_product.price, "Price does not match"
         )
 
-    def test_create_product_no_data(self):
-        """Create a Product with missing data"""
-        resp = self.app.post(BASE_URL, json={}, content_type=CONTENT_TYPE_JSON)
-        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
-
     def test_update_product(self):
         """Update an existing Product"""
         # create a product to update
@@ -166,6 +174,17 @@ class TestProductServer(unittest.TestCase):
         updated_product = resp.get_json()
         self.assertEqual(updated_product["name"], "Huawei")
 
+    def test_update_product_nothing(self):
+        """Update no-existing Product"""
+        resp = self.app.put(
+            "/products/{}".format(0),
+            json={},
+            content_type=CONTENT_TYPE_JSON,
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+        
+
     def test_delete_product(self):
         """Delete a Product"""
         test_product = self._create_products(1)[0]
@@ -179,3 +198,53 @@ class TestProductServer(unittest.TestCase):
             "{0}/{1}".format(BASE_URL, test_product.id), content_type=CONTENT_TYPE_JSON
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product_no_data(self):
+        """Delete a Product with no data"""
+        resp = self.app.delete(
+            "{0}/{1}".format(BASE_URL, 0), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_product_no_data(self):
+        """Create a Product with missing data"""
+        resp = self.app.post(BASE_URL, json={}, content_type=CONTENT_TYPE_JSON)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_product_bad_price_string(self):
+        """ Create a Product with bad available data"""
+        test_product = ProductFactory()
+        logging.debug(test_product)
+        # change available to a string
+        test_product.price = "dollar"
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    #def test_create_product_bad_price_negative(self):
+    #    """ Create a Product with bad available data"""
+    #    test_product = ProductFactory()
+    #    logging.debug(test_product)
+    #    # change available to a string
+    #    test_product.price = -1000
+    #    resp = self.app.post(
+    #        BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+    #    )
+    #    self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_product_not_found(self):
+        """Get a Product that not found"""
+        resp = self.app.get("/products/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_method_not_allowed(self):
+        """Send a request with a method that is not allowed"""
+        resp = self.app.delete(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    def test_create_product_no_content_type(self):
+        """Create a Product with no content type"""
+        resp = self.app.post(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+

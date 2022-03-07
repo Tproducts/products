@@ -59,6 +59,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(product.name, "iPhone")
         self.assertEqual(product.description, "this is test product")
         self.assertEqual(product.price, 100)
+        self.assertEqual(product.__repr__(), "<Product %r id=[%s]>" % (product.name, product.id))
 
     def test_add_a_product(self):
         """Create a product and add it to the database"""
@@ -68,7 +69,7 @@ class TestProductModel(unittest.TestCase):
         self.assertTrue(product != None)
         self.assertEqual(product.id, None)
         product.create()
-        # Asert that it was assigned an id and shows up in the database
+        # Assert that it was assigned an id and shows up in the database
         self.assertEqual(product.id, 1)
         products = Product.all()
         self.assertEqual(len(products), 1)
