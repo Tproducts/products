@@ -17,6 +17,7 @@ price (Integer) - The price of the product
 import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 
 logger = logging.getLogger("flask.app")
 

@@ -14,7 +14,7 @@ App running:
 ```
 flask run
 ```
-Routers check:
+All Available Routers check:
 ```
 flask routes
 ```
