@@ -1,7 +1,7 @@
 """
-Product Store Service
+Product Service
 
-Paths:
+Paths (Based on RESTful standard):
 ------
 GET /products - Returns a list all of the Products
 GET /products/{id} - Returns the Product with a given id number
@@ -27,9 +27,16 @@ def index():
     app.logger.info("Request for Root URL")
     return (
         jsonify(
+<<<<<<< HEAD
             name="Product Demo REST API Service",
             version="1.0",
             paths=url_for("list_products", _external=True),
+=======
+            name="Product REST API Service",
+            version="1.0",
+            list_products=url_for("list_products", _external=True),
+            create_products="You can run 'post.py' program under 'tests' folder to create some new products"
+>>>>>>> be870195d602cd1e572f2247166dd22e38e6f11d
         ),
         status.HTTP_200_OK,
     )
@@ -74,7 +81,11 @@ def get_products(product_id):
 
 
 ######################################################################
+<<<<<<< HEAD
 # ADD A NEW PRODUCT
+=======
+# CREATE A NEW PRODUCT
+>>>>>>> be870195d602cd1e572f2247166dd22e38e6f11d
 ######################################################################
 @app.route("/products", methods=["POST"])
 def create_products():
@@ -142,7 +153,10 @@ def delete_products(product_id):
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> be870195d602cd1e572f2247166dd22e38e6f11d
 def check_content_type(media_type):
     """Checks that the media type is correct"""
     content_type = request.headers.get("Content-Type")
