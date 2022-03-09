@@ -83,6 +83,10 @@ class Product(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def show(self):
+        """Show the product's information."""
+        logger.info(self)
+
     def serialize(self) -> dict:
         """Serializes a Product into a dictionary"""
         return {
