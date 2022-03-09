@@ -40,6 +40,7 @@ Test case can be ran with:
 ```
 nosetests
 ```
+The code coverage rate can achieve 95%
 
 Unit test can be ran with:
 
@@ -50,10 +51,7 @@ python -m unittest discover
 App running:
 
 ```
-// method 1
-flask rtun
-// method 2
-honcho start
+flask run
 ```
 
 All Available Routers check:
