@@ -79,7 +79,7 @@ class Product(db.Model):
         db.session.commit()
 
     def delete(self):
-        """Removes a Product from the data store"""
+        """Removes a Product from the database."""
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
