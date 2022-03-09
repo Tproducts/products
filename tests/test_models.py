@@ -7,7 +7,9 @@ Test cases can be run with:
 """
 import os
 import logging
+from unicodedata import name
 import unittest
+from sqlalchemy import null
 from werkzeug.exceptions import NotFound
 from service.models import Product, DataValidationError, db
 from service import app
@@ -93,6 +95,11 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(len(products), 1)
         self.assertEqual(products[0].id, 1)
         self.assertEqual(products[0].price, 500)
+
+    #def test_update_empty_id_product(self):
+    #    """Update a empty id product"""
+    #    Product(id = null, name="iPhone8 Plus", description="test1", price=100).create()
+    #    self.assertRaises(DataValidationError, Product.update, Product)
 
     def test_delete_a_product(self):
         """Delete a Product"""
