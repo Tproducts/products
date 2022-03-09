@@ -132,7 +132,6 @@ def delete_products(product_id):
     This endpoint will delete a Product based the id specified in the path
     """
     app.logger.info("Request to delete product with id: %s", product_id)
-    check_content_type("application/json")
     product = Product.find(product_id)
     if not product:
         raise NotFound("Product with id '{}' was not found.".format(product_id))
