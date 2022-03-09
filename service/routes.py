@@ -85,6 +85,7 @@ def create_products():
     """
     app.logger.info("Request to create a product")
     check_content_type("application/json")
+    # Create a Product
     product = Product()
     product.deserialize(request.get_json())
     product.create()
