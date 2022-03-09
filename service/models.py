@@ -65,7 +65,6 @@ class Product(db.Model):
         logger.info("Creating %s", self.name)
         # id must be none to generate next primary key
         self.id = None 
-        # add into database 
         db.session.add(self)
         db.session.commit()
 
