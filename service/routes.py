@@ -30,7 +30,7 @@ def index():
             name="Product REST API Service",
             version="1.0",
             list_products=url_for("list_products", _external=True),
-            create_products="You can run 'post.py' program under 'tests' folder to create some new products"
+            create_products="You can run the 'post.py' program located in the 'tests' folder to create some new products"
         ),
         status.HTTP_200_OK,
     )
@@ -85,6 +85,7 @@ def create_products():
     """
     app.logger.info("Request to create a product")
     check_content_type("application/json")
+    # Create a Product
     product = Product()
     product.deserialize(request.get_json())
     product.create()

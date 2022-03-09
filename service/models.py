@@ -63,7 +63,8 @@ class Product(db.Model):
         Creates a Product to the database
         """
         logger.info("Creating %s", self.name)
-        self.id = None  # id must be none to generate next primary key
+        # id must be none to generate next primary key
+        self.id = None 
         db.session.add(self)
         db.session.commit()
 
@@ -77,10 +78,14 @@ class Product(db.Model):
         db.session.commit()
 
     def delete(self):
-        """Removes a Product from the data store"""
+        """Removes a Product from the database."""
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
+
+    def show(self):
+        """Show the product's information."""
+        logger.info(self)
 
     def serialize(self) -> dict:
         """Serializes a Product into a dictionary"""
