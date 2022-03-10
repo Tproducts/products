@@ -8,6 +8,7 @@ Test cases can be run with:
 from itertools import product
 import os
 import logging
+from sqlite3 import InternalError
 from unicodedata import name
 import unittest
 from sqlalchemy import null
@@ -155,10 +156,9 @@ class TestProductModel(unittest.TestCase):
 
     def test_deserialize_bad_price(self):
         """ Test deserialization of bad price attribute """
-        test_product = ProductFactory()
-        data = test_product.serialize()
-        data["price"] = "wrong" # wrong case
         product = Product()
+        data = product.serialize()
+        data["price"] = "wrong" # wrong case
         self.assertRaises(DataValidationError, product.deserialize, data)
 
     def test_find_product(self):
