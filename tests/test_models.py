@@ -5,6 +5,7 @@ Test cases can be run with:
     nosetests
 
 """
+from itertools import product
 import os
 import logging
 from unicodedata import name
@@ -199,3 +200,8 @@ class TestProductModel(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """Find or return 404 NOT found"""
         self.assertRaises(NotFound, Product.find_or_404, 0)
+
+    def test_show_function(self):
+        """Test show function"""
+        product = ProductFactory()
+        product.show()
