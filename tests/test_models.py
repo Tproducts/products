@@ -5,8 +5,10 @@ Test cases can be run with:
     nosetests
 
 """
+from itertools import product
 import os
 import logging
+from sqlite3 import InternalError
 from unicodedata import name
 import unittest
 from sqlalchemy import null
@@ -154,10 +156,9 @@ class TestProductModel(unittest.TestCase):
 
     def test_deserialize_bad_price(self):
         """ Test deserialization of bad price attribute """
-        test_product = ProductFactory()
-        data = test_product.serialize()
-        data["price"] = "wrong" # wrong case
         product = Product()
+        data = product.serialize()
+        data["price"] = "wrong" # wrong case
         self.assertRaises(DataValidationError, product.deserialize, data)
 
     def test_find_product(self):
@@ -199,3 +200,8 @@ class TestProductModel(unittest.TestCase):
     def test_find_or_404_not_found(self):
         """Find or return 404 NOT found"""
         self.assertRaises(NotFound, Product.find_or_404, 0)
+
+    def test_show_function(self):
+        """Test show function"""
+        product = ProductFactory()
+        product.show()

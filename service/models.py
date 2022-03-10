@@ -50,6 +50,10 @@ class Product(db.Model):
     name = db.Column(db.String(63), nullable=False)
     description = db.Column(db.String(63))
     price = db.Column(db.Integer, nullable=False, default=100)
+    # __table__args = (
+    #   CheckConstraint(price >= 0, name='check_price_positive'), {}
+    # )
+    # we should consider about the negative price in next sprint
 
     ##################################################
     # INSTANCE METHODS
@@ -113,8 +117,8 @@ class Product(db.Model):
                     "Invalid type for boolean [price]: "
                     + str(type(data["price"]))
                 )
-        except AttributeError as error:
-            raise DataValidationError("Invalid attribute: " + error.args[0])
+        #except AttributeError as error:
+        #    raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
             raise DataValidationError(
                 "Invalid Product: missing " + error.args[0]
