@@ -51,7 +51,10 @@ python -m unittest discover
 App running:
 
 ```
+// method 1
 flask run
+// method 2
+honcho start
 ```
 
 All Available Routers check:
