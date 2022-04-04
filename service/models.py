@@ -49,13 +49,6 @@ class DataValidationError(Exception):
     """Custom Exception with data validation fails"""
 
 
-# class Gender(Enum):
-#     """Enumeration of valid Product Genders"""
-#
-#     MALE = 0
-#     FEMALE = 1
-#     UNKNOWN = 3
-
 
 class Product:
     """
