@@ -13,6 +13,7 @@ from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 from service import routes
 from service.utils import status
 from tests.factories import ProductFactory
+from service.models import Product
 
 # Disable all but critical errors during normal test run
 # uncomment for debugging failing tests
@@ -76,7 +77,7 @@ class TestProductRoutes(TestCase):
         self.assertTrue(len(resp.data) > 0)
 
     def test_get_product(self):
-        """get a single Product"""
+        """Get a single Product"""
         test_product = self._create_products()[0]
         resp = self.app.get(
             f"{BASE_URL}/{test_product.id}", content_type=CONTENT_TYPE_JSON
@@ -114,6 +115,7 @@ class TestProductRoutes(TestCase):
         self.assertEqual(new_product["available"], test_product.available)
         self.assertEqual(new_product["price"], test_product.price)
         self.assertEqual(new_product["description"], test_product.description)
+        self.assertEqual(new_product["stock"], test_product.stock)
 
         # Check that the location header was correct
         resp = self.app.get(location, content_type=CONTENT_TYPE_JSON)
@@ -124,6 +126,7 @@ class TestProductRoutes(TestCase):
         self.assertEqual(new_product["available"], test_product.available)
         self.assertEqual(new_product["price"], test_product.price)
         self.assertEqual(new_product["description"], test_product.description)
+        self.assertEqual(new_product["stock"], test_product.stock)
 
     def test_create_product_from_formdata(self):
         """Test processing FORM data"""
@@ -134,6 +137,7 @@ class TestProductRoutes(TestCase):
         product_data.add("available", product["available"])
         product_data.add("price", product["price"])
         product_data.add("description", product["description"])
+        product_data.add("stock", product["stock"])
         data = ImmutableMultiDict(product_data)
         logging.debug("Sending Product data: %s", data)
         resp = self.app.post(BASE_URL, data=data, content_type="application/x-www-form-urlencoded")
@@ -281,21 +285,27 @@ class TestProductRoutes(TestCase):
         products = self._create_products(10)
         available_products = [product for product in products if product.available is True]
         product = available_products[0]
+        
         resp = self.app.put(f"{BASE_URL}/{product.id}/purchase", content_type="application/json")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         resp = self.app.get(f"{BASE_URL}/{product.id}")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
         logging.debug("Response data: %s", data)
-        self.assertEqual(data["available"], False)
+        # self.assertEqual(data["available"], False)
+        stock_num = product.stock
+        self.assertEqual(stock_num - 1, data["stock"])
 
     def test_purchase_not_available(self):
         """Purchase a Product that is not available"""
-        products = self._create_products(10)
-        unavailable_products = [product for product in products if product.available is False]
-        product = unavailable_products[0]
-        resp = self.app.put(f"{BASE_URL}/{product.id}/purchase", content_type="application/json")
-        self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
+        unavailable_product = Product("iPhone15 Pro Max", "Phone", False, 2099, "This is an unavailable product", 0)
+        resp = self.app.post(
+                BASE_URL, json=unavailable_product.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+        new_product = resp.get_json()
+        unavailable_product.id = new_product["_id"]
+        resp2 = self.app.put(f"{BASE_URL}/{unavailable_product.id}/purchase", content_type="application/json")
+        self.assertEqual(resp2.status_code, status.HTTP_409_CONFLICT)
 
     ######################################################################
     # Utility functions
