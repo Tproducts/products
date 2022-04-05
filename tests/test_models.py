@@ -61,7 +61,7 @@ class TestProductModel(TestCase):
 
     def test_create_a_product(self):
         """Create a product and assert that it exists"""
-        product = Product("iPhone13 Pro Max", "Phone", True, 1099, "This is a test data")
+        product = Product("iPhone13 Pro Max", "Phone", True, 1099, "This is a test data", 1)
         self.assertNotEqual(product, None)
         self.assertEqual(product.id, None)
         self.assertEqual(product.name, "iPhone13 Pro Max")
@@ -69,6 +69,7 @@ class TestProductModel(TestCase):
         self.assertEqual(product.available, True)
         self.assertEqual(product.price, 1099)
         self.assertEqual(product.description, "This is a test data")
+        self.assertEqual(product.stock, 1)
 
     def test_add_a_product(self):
         """Create a product and add it to the database"""
@@ -88,6 +89,7 @@ class TestProductModel(TestCase):
         self.assertEqual(products[0].available, product.available)
         self.assertEqual(products[0].price, product.price)
         self.assertEqual(products[0].description, product.description)
+        self.assertEqual(products[0].stock, product.stock)
 
     def test_update_a_product(self):
         """Update a Product"""
@@ -127,6 +129,7 @@ class TestProductModel(TestCase):
         self.assertEqual(data["available"], product.available)
         self.assertEqual(data["price"], product.price)
         self.assertEqual(data["description"], product.description)
+        self.assertEqual(data["stock"], product.stock)
 
     def test_deserialize_a_product(self):
         """Deserialize a Product"""
@@ -141,6 +144,7 @@ class TestProductModel(TestCase):
         self.assertEqual(product.available, data["available"])
         self.assertEqual(product.price, data["price"])
         self.assertEqual(product.description, data["description"])
+        self.assertEqual(product.stock, data["stock"])
 
     def test_deserialize_with_no_name(self):
         """Deserialize a Product that has no name"""
@@ -180,6 +184,7 @@ class TestProductModel(TestCase):
         self.assertEqual(product.available, saved_product.available)
         self.assertEqual(product.price, saved_product.price)
         self.assertEqual(product.description, saved_product.description)
+        self.assertEqual(product.stock, saved_product.stock)
 
     def test_find_with_no_products(self):
         """Find a Product with empty database"""
@@ -207,6 +212,7 @@ class TestProductModel(TestCase):
         self.assertEqual(product.available, saved_product.available)
         self.assertEqual(product.price, saved_product.price)
         self.assertEqual(product.description, saved_product.description)
+        self.assertEqual(product.stock, saved_product.stock)
 
     def test_find_by_category(self):
         """Find a Product by Category"""

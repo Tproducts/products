@@ -14,6 +14,20 @@ Docker Note:
     CouchDB uses /opt/couchdb/data to store its data, and is exposed as a volume
     e.g., to use current folder add: -v $(pwd):/opt/couchdb/data
     You can also use Docker volumes like this: -v couchdb_data:/opt/couchdb/data
+
+Models
+------
+Product - A Product used in eCommerce application
+
+Attributes:
+-----------
+name (string) - The name of the product
+category (string) - The category of the product
+available (bool) - Whether the product is available for purchase
+price (integer) - The price of the product
+description (string) - A brief description which is used to describe a product
+stock (integer) - Remaining stock of the product
+
 """
 
 import os
@@ -49,13 +63,6 @@ class DataValidationError(Exception):
     """Custom Exception with data validation fails"""
 
 
-# class Gender(Enum):
-#     """Enumeration of valid Product Genders"""
-#
-#     MALE = 0
-#     FEMALE = 1
-#     UNKNOWN = 3
-
 
 class Product:
     """
@@ -74,7 +81,8 @@ class Product:
         category: str = None,
         available: bool = True,
         price: int = 0,
-        description: str = None
+        description: str = None,
+        stock: int = 0
     ):
         """Constructor"""
         self.id = None  # pylint: disable=invalid-name
@@ -83,6 +91,7 @@ class Product:
         self.available = available
         self.price = price
         self.description = description
+        self.stock = stock
 
     def __repr__(self):
         return f"<Product {self.name} id=[{self.id}]>"
@@ -132,7 +141,8 @@ class Product:
             "category": self.category,
             "available": self.available,
             "price": self.price,
-            "description": self.description
+            "description": self.description,
+            "stock": self.stock
         }
         if self.id:
             product["_id"] = self.id
@@ -153,6 +163,7 @@ class Product:
                 raise DataValidationError("Invalid type for boolean [available]: " + str(type(data["available"])))
             self.price = data["price"]
             self.description = data["description"]
+            self.stock = data["stock"]
         except KeyError as error:
             raise DataValidationError("Invalid product: missing " + error.args[0])
         except TypeError as error:
@@ -249,12 +260,7 @@ class Product:
     def find_by_availability(cls, available: bool = True):
         """Query that finds Products by their availability"""
         return cls.find_by(available=available)
-
-    # @classmethod
-    # @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    # def find_by_gender(cls, gender: str = Gender.UNKNOWN.name):
-    #     """Query that finds Products by their gender as a string"""
-    #     return cls.find_by(gender=gender)
+    
 
     ############################################################
     #  C L O U D A N T   D A T A B A S E   C O N N E C T I O N

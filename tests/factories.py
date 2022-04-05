@@ -16,6 +16,8 @@ class ProductFactory(factory.Factory):
 
     name = factory.Faker("word")
     category = FuzzyChoice(choices=["Phone", "Laptop", "Earphone", "Keyboard", "Mouse"])
-    available = FuzzyChoice(choices=[True, False])
+    # available = FuzzyChoice(choices=[True, False])
     price = FuzzyChoice(choices=[50, 100, 200, 1000])
     description = factory.Faker("sentence")
+    stock = FuzzyChoice(choices=[0, 1, 2, 3])
+    available = False if stock == 0 else True
