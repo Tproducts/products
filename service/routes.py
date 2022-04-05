@@ -50,7 +50,6 @@ def list_products():
     category = request.args.get("category")
     name = request.args.get("name")
     available = request.args.get("available")
-    gender = request.args.get("gender")
 
     if available:  # convert to boolean
         available = available.lower() in ["true", "yes", "1"]
@@ -64,9 +63,6 @@ def list_products():
     elif available:
         app.logger.info("Find by available: %s", available)
         products = Product.find_by_availability(available)
-    # elif gender:
-    #     app.logger.info("Find by gender: %s", gender)
-    #     products = Product.find_by_gender(gender)
     else:
         app.logger.info("Find all")
         products = Product.all()
@@ -115,7 +111,8 @@ def create_products():
             "category": request.form["category"],
             "available": request.form["available"] in ['True', 'true', '1'],
             "price": request.form["price"],
-            "description": request.form["description"]
+            "description": request.form["description"],
+            "stock": request.form["stock"]
         }
     else:
         check_content_type("application/json")
@@ -191,7 +188,9 @@ def purchase_products(product_id):
             status.HTTP_409_CONFLICT,
             f"Product with id '{product_id}' is not available.",
         )
-    product.available = False
+    product.stock = product.stock - 1
+    if product.stock == 0:
+        product.available = False
     product.update()
     return make_response(jsonify(product.serialize()), status.HTTP_200_OK)
 
