@@ -58,6 +58,10 @@ class TestProductModel(TestCase):
             product.create()
             product_collection.append(product)
         return product_collection
+    
+    def test_repr(self):
+        product = Product("iPhone13 Pro Max", "Phone", True, 1099, "This is a test data", 1)
+        self.assertEqual(repr(product), "<Product iPhone13 Pro Max id=[None]>")
 
     def test_create_a_product(self):
         """Create a product and assert that it exists"""
@@ -161,7 +165,13 @@ class TestProductModel(TestCase):
         """Deserialize a Product that has bad data"""
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, "string data")
-
+    
+    def test_deserialize_with_invalid_type_available(self):
+        """Deserialize a Product that is not available"""
+        data = Product("iPhone13 Pro Max", "Phone", "ABC", 1099, "This is a test data", 1).serialize()
+        product = Product() 
+        self.assertRaises(DataValidationError, product.deserialize, data)
+    
     def test_save_a_product_with_no_name(self):
         """Save a Product with no name"""
         product = Product(None, "Phone")
