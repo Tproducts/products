@@ -14,7 +14,7 @@ from .utils import log_handlers
 # BEFORE you import modules that depend on it !!!
 
 # Create the Flask aoo
-app = Flask(__name__)  # pylint: disable=invalid-name
+app = Flask(__name__, template_folder='static')  # pylint: disable=invalid-name
 
 # Load Configurations
 app.config.from_object("config")
