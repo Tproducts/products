@@ -13,7 +13,7 @@ DELETE /products/{id} - deletes a Product record in the database
 
 import sys
 import logging
-from flask import jsonify, request, json, url_for, make_response, abort
+from flask import jsonify, request, json, url_for, make_response, abort, render_template
 from . import app
 from service.models import Product
 from .utils import status  # HTTP Status Codes
@@ -35,8 +35,7 @@ def healthcheck():
 @app.route("/")
 def index():
     """Base URL for our service"""
-    return app.send_static_file("index.html")
-
+    return render_template("index.html")
 
 ######################################################################
 # LIST ALL PRODUCTS

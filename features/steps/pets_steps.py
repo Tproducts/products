@@ -16,14 +16,14 @@ def step_impl(context):
     """ Delete all Pets and load new ones """
     headers = {'Content-Type': 'application/json'}
     # list all of the pets and delete them one by one
-    context.resp = requests.get(context.base_url + '/pets', headers=headers)
+    context.resp = requests.get(context.base_url + '/products', headers=headers)
     expect(context.resp.status_code).to_equal(200)
     for pet in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/pets/' + str(pet["_id"]), headers=headers)
+        context.resp = requests.delete(context.base_url + '/products' + str(pet["_id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
     
     # load the database with new pets
-    create_url = context.base_url + '/pets'
+    create_url = context.base_url + '/products'
     for row in context.table:
         data = {
             "name": row['name'],
