@@ -6,7 +6,9 @@ nosetests -v --with-spec --spec-color
 nosetests --stop tests/test_products.py:TestProducts
 """
 
+import os
 import logging
+import json
 from datetime import date
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -299,3 +301,31 @@ class TestProductModel(TestCase):
         """Test Connection error handler"""
         bad_mock.side_effect = ConnectionError()
         self.assertRaises(DatabaseConnectionError, Product.init_db, "test")
+
+    # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
+    # def test_vcap_services(self):
+    #     """ Test if VCAP_SERVICES works """
+    #     Product.init_db("test")
+    #     self.assertIsNotNone(Product.client)
+
+    # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES)})
+    # def test_vcap_no_services(self):
+    #     """ Test VCAP_SERVICES without Cloudant """
+    #     Pet.init_db("test")
+    #     self.assertIsNotNone(Pet.client)
+    #     self.assertIsNotNone(Pet.database)
+    
+    # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES),
+    #                          'BINDING_CLOUDANT': json.dumps(BINDING_CLOUDANT)})
+    # def test_vcap_with_binding(self):
+    #     """ Test no VCAP_SERVICES with BINDING_CLOUDANT """
+    #     Pet.init_db("test")
+    #     self.assertIsNotNone(Pet.client)
+    #     self.assertIsNotNone(Pet.database)
+    
+    # @patch.dict(os.environ, {'BINDING_CLOUDANT': json.dumps(BINDING_CLOUDANT)})
+    # def test_vcap_no_services(self):
+    #     """ Test BINDING_CLOUDANT """
+    #     Pet.init_db("test")
+    #     self.assertIsNotNone(Pet.client)
+    #     self.assertIsNotNone(Pet.database)
