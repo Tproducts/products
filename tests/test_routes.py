@@ -333,6 +333,12 @@ class TestProductRoutes(TestCase):
         resp2 = self.app.put(f"{BASE_URL}/{unavailable_product.id}/purchase", content_type="application/json")
         self.assertEqual(resp2.status_code, status.HTTP_409_CONFLICT)
 
+    def test_logging(self):
+        """Test Loging function"""
+        self.app = routes.app.test_client()
+        routes.app.debug = False
+        routes.initialize_logging(logging.INFO)
+
     ######################################################################
     # Utility functions
     ######################################################################
