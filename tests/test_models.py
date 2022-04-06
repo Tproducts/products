@@ -252,10 +252,14 @@ class TestProductModel(TestCase):
         Product.create_query_index("category")
 
     def test_disconnect(self):
-        """Test Disconnet"""
+        """Test Disconnect"""
         Product.disconnect()
         product = ProductFactory()
         self.assertRaises(AttributeError, product.create)
+
+    def test_connect(self):
+        """Test Connect"""
+        Product.connect()
 
     @patch("cloudant.database.CloudantDatabase.create_document")
     def test_http_error(self, bad_mock):

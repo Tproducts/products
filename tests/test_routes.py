@@ -69,6 +69,13 @@ class TestProductRoutes(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertIn(b"Product Demo REST API Service", resp.data)
 
+    def test_health(self):
+        """Test the health check function"""
+        resp = self.app.get("/healthcheck")
+        data = resp.get_json()
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(data['message'], "Healthy")
+
     def test_get_product_list(self):
         """Get a list of Products"""
         self._create_products(5)
@@ -279,6 +286,25 @@ class TestProductRoutes(TestCase):
         # check the data just to be sure
         for product in data:
             self.assertEqual(product["available"], True)
+
+    def test_purchase_not_exist(self):
+        """Purchase a Product which is not exist"""
+        product_id = -1
+        resp = self.app.put(f"{BASE_URL}/{product_id}/purchase", content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_purchase_sold_out(self):
+        """Purchase a Product with zero stock"""
+        zero_stock_product = Product("iPhone15 Pro Max", "Phone", True, 2099, "This is the last product", 1)
+        resp = self.app.post(
+                BASE_URL, json=zero_stock_product.serialize(), content_type=CONTENT_TYPE_JSON
+            )
+        new_product = resp.get_json()
+        zero_stock_product.id = new_product["_id"]
+        resp2 = self.app.put(f"{BASE_URL}/{zero_stock_product.id}/purchase", content_type="application/json")
+        data = resp2.get_json()
+        self.assertEqual(data['stock'], 0)
+        self.assertEqual(data['available'], False)
 
     def test_purchase_a_product(self):
         """Purchase a Product"""
