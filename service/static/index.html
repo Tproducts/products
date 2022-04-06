@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="static/css/cerulean_bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/fd31a8cc81.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="container">
@@ -41,51 +44,54 @@
 
             <!-- NAME -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_name">Name:</label>
+              <label class="control-label col-sm-2" for="product_name">Name:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="pet_name" placeholder="Enter name for Product">
+                <input type="text" class="form-control" name="name" id="product_name" placeholder="Enter name of Product">
               </div>
             </div>
 
             <!-- CATEGORY -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_category">Category:</label>
+              <label class="control-label col-sm-2" for="product_category">Category:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="pet_category" placeholder="Enter category for Product">
+                <input type="text" class="form-control" name="category" id="product_category" placeholder="Enter category of Product">
               </div>
             </div>
 
             <!-- AVAILABLE -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_available">Available:</label>
+              <label class="control-label col-sm-2" for="product_available">Available:</label>
               <div class="col-sm-10">
-                <select class="form-control" id="pet_available">
+                <select class="form-control" name="available" id="product_available">
                   <option value="true" selected>True</option>
                   <option value="false">False</option>
                 </select>
               </div>
             </div>
 
-            <!-- GENDER -->
+            <!-- PRICE -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_gender">Gender:</label>
+              <label class="control-label col-sm-2" for="product_price">Price:</label>
               <div class="col-sm-10">
-                <select class="form-control" id="pet_gender">
-                  <option value="UNKNOWN" selected>Unknown</option>
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                </select>
+                <input type="text" class="form-control" name="price" id="product_price" placeholder="Enter price of Product">
+              </div>
+            </div>
+            
+            <!-- STOCK -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="product_stock">Stock:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="stock" id="product_stock" placeholder="Enter stock of Product">
               </div>
             </div>
 
-            <!-- BIRTHDAY -->
+            <!-- DESCRIPTION -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="pet_birthday">Birthday:</label>
+              <label class="control-label col-sm-2" for="product_desctiption">Description:</label>
               <div class="col-sm-10">
-                <input type="date" class="form-control" id="pet_birthday" placeholder="2020-04-01">
+                <textarea class="form-control" name="description" id="product_desctiption" rows="3" placeholder="Enter description of Product"></textarea>
               </div>
             </div>
-
 
             <!-- SUBMIT BUTTONS -->
             <div class="form-group">
@@ -106,19 +112,25 @@
           <thead>
           <tr>
             <th class="col-md-1">ID</th>
-            <th class="col-md-4">Name</th>
-            <th class="col-md-4">Category</th>
-            <th class="col-md-3">Available</th>
-            <th class="col-md-3">Gender</th>
-            <th class="col-md-3">Birthday</th>
+            <th class="col-md-2">Name</th>
+            <th class="col-md-2">Category</th>
+            <th class="col-md-2">Available</th>
+            <th class="col-md-2">Price</th>
+            <th class="col-md-2">Stock</th>
+            <th class="col-md-4">Description</th>
           </tr>
           </thead>
         </table>
       </div>
 
       <footer>
-        <br><br>
-        <p>&copy; NYU DevOps Company 2022</p>
+        <div class="text-center p-4" style="background-color: rgba(0,0,0,0,05);">
+          <i class="social-icon fab fa-facebook"></i>
+          <i class="social-icon fab fa-twitter"></i>
+          <i class="social-icon fab fa-instagram-square"></i>
+          <i class="social-icon fas fa-envelope-square"></i>
+          <p>&copy; NYU DevOps Company 2022</p>
+        </div>
       </footer>
 
     </div> <!-- container -->

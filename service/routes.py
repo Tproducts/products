@@ -110,8 +110,8 @@ def create_products():
             "category": request.form["category"],
             "available": request.form["available"] in ['True', 'true', '1'],
             "price": request.form["price"],
-            "description": request.form["description"],
-            "stock": request.form["stock"]
+            "stock": request.form["stock"],
+            "description": request.form["description"]
         }
     else:
         check_content_type("application/json")
