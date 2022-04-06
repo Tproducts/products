@@ -14,6 +14,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from requests import HTTPError, ConnectionError
 from service.models import Product, DataValidationError, DatabaseConnectionError
+from service.utils import status
 from tests.factories import ProductFactory
 
 # cspell:ignore VCAP SQLDB
@@ -301,6 +302,9 @@ class TestProductModel(TestCase):
         """Test Connection error handler"""
         bad_mock.side_effect = ConnectionError()
         self.assertRaises(DatabaseConnectionError, Product.init_db, "test")
+        product = ProductFactory()
+        product.create()
+        product.delete()
 
     # @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
     # def test_vcap_services(self):
