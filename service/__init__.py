@@ -19,12 +19,9 @@ app = Flask(__name__, template_folder='static')  # pylint: disable=invalid-name
 # Load Configurations
 app.config.from_object("config")
 
-# Dependencis rquire we import the routes AFTER the Flask app is created
-from service import (
-    routes,
-    models,
-)  # pylint: disable=wrong-import-position, wrong-import-order
-from .utils import error_handlers  # pylint: disable=wrong-import-position
+# Import the routes After the Flask app is created
+from service import routes, models
+from .utils import error_handlers
 
 # Set up logging for production
 log_handlers.init_logging(app, "gunicorn.error")

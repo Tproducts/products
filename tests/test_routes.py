@@ -8,12 +8,13 @@ nosetests --stop tests/test_service.py:TestProductServer
 
 from unittest import TestCase
 import logging
-from urllib.parse import quote_plus
-from werkzeug.datastructures import MultiDict, ImmutableMultiDict
-from service import routes
-from service.utils import status
-from tests.factories import ProductFactory
-from service.models import Product
+import unittest
+
+# from unittest.mock import MagicMock, patch
+from service.utils import status  # HTTP Status Codes
+from service.models import db, init_db
+from service.routes import app
+from .factories import ProductFactory
 
 # Disable all but critical errors during normal test run
 # uncomment for debugging failing tests

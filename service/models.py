@@ -58,6 +58,9 @@ RETRY_BACKOFF = int(os.environ.get("RETRY_BACKOFF", 2))
 class DatabaseConnectionError(Exception):
     """Custom Exception when database connection fails"""
 
+class DatabaseConnectionError(Exception):
+    """Custom Exception when database connection fails"""
+    pass
 
 class DataValidationError(Exception):
     """Custom Exception with data validation fails"""
