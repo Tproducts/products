@@ -40,15 +40,15 @@ def healthcheck():
 def index():
     """Root URL response"""
     app.logger.info("Request for Root URL")
-    return (
-        jsonify(
-            name="Product REST API Service",
-            version="1.0",
-            list_products=url_for("list_products", _external=True),
-            create_products="You can run the 'post.py' program located in the 'tests' folder to create some new products"
-        ),
-        status.HTTP_200_OK,
-    )
+    #return (
+    #    jsonify(
+    #        name="Product REST API Service",
+    #        version="1.0",
+    #        list_products=url_for("list_products", _external=True),
+    #        create_products="You can run the 'post.py' program located in the 'tests' folder to create some new products"
+    #    ),
+    #    status.HTTP_200_OK,
+    #)
     return app.send_static_file("index.html")
 
 
