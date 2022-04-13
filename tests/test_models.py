@@ -11,9 +11,12 @@ import logging
 from sqlite3 import InternalError
 from unicodedata import name
 import unittest
+from unittest import TestCase
+from unittest.mock import MagicMock, patch
+from requests import HTTPError, ConnectionError
 from sqlalchemy import null
 from werkzeug.exceptions import NotFound
-from service.models import Product, DataValidationError, db
+from service.models import Product, DataValidationError, db, DatabaseConnectionError
 from service import app
 from .factories import ProductFactory
 
@@ -205,3 +208,9 @@ class TestProductModel(unittest.TestCase):
         """Test show function"""
         product = ProductFactory()
         product.show()
+
+    @patch('service.models.Product.init_db')
+    def test_connection_error(self, bad_mock):
+        """Test Connection error handler"""
+        bad_mock.side_effect = DatabaseConnectionError() 
+        self.assertRaises(DatabaseConnectionError, Product.init_db)
