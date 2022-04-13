@@ -1,11 +1,5 @@
-# Image for a Python 3 development environment with selenium
-# FROM python:3.9-slim
-# RUN apt-get update && apt-get install -y \
-#     chromium-driver \
-#     python3-selenium
-
-# This image has selenium and chrome driver already installed
-FROM rofrano/pipeline-selenium:latest
+# Image for a Python 3 development environment
+FROM python:3.9-slim
 
 # Add any tools that are needed beyond Python 3.9
 RUN apt-get update && \
@@ -25,13 +19,16 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# Added libraries for PostgreSQL
+RUN apt-get install -y gcc libpq-dev
+
 # Set up the Python development environment
 WORKDIR /app
 COPY requirements.txt .
 RUN python -m pip install --upgrade pip wheel && \
     pip install -r requirements.txt
 
-ENV PORT 8080
+ENV PORT 8000
 EXPOSE $PORT
 
 # Enable color terminal for docker exec bash

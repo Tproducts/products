@@ -1,6 +1,5 @@
-// cspell:disable
 {
-	"name": "Python & CouchDB",
+	"name": "Python 3 & PostgeSQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/app",
@@ -18,13 +17,12 @@
 		"donjayamanne.githistory",
 		"GitHub.vscode-pull-request-github",
 		"hbenl.vscode-test-explorer",
-		"LittleFoxTeam.vscode-python-test-adapter",
 		"njpwerner.autodocstring",
 		"redhat.vscode-yaml",
 		"streetsidesoftware.code-spell-checker",
 		"wholroyd.jinja",
 		"bbenoist.vagrant"
 	],
-	// Create .env file if it doesn't exist
-	"postCreateCommand": "if [ ! -f .env ]; then cp dot-env-example .env; fi; "
+	//"forwardPorts": [8000],
+	//"postCreateCommand": "sudo pip install -U pip wheel && sudo pip install -r requirements.txt"
 }

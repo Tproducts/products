@@ -1,19 +1,7 @@
 """
-Product Model that uses Cloudant
+Models for Product Service
 
-You must initialize this class before use by calling initialize().
-This class looks for an environment variable called VCAP_SERVICES
-to get it's database credentials from. If it cannot find one, it
-tries to connect to Cloudant on the localhost. If that fails it looks
-for a server name 'cloudant' to connect to.
-
-To use with Docker couchdb database use:
-    docker run -d --name couchdb -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass couchdb
-
-Docker Note:
-    CouchDB uses /opt/couchdb/data to store its data, and is exposed as a volume
-    e.g., to use current folder add: -v $(pwd):/opt/couchdb/data
-    You can also use Docker volumes like this: -v couchdb_data:/opt/couchdb/data
+All of the models are stored in this module
 
 Models
 ------
@@ -22,311 +10,191 @@ Product - A Product used in eCommerce application
 Attributes:
 -----------
 name (string) - The name of the product
-category (string) - The category of the product
-available (bool) - Whether the product is available for purchase
-price (integer) - The price of the product
 description (string) - A brief description which is used to describe a product
-stock (integer) - Remaining stock of the product
+price (Integer) - The price of the product
 
 """
-
-import os
-import json
 import logging
-from enum import Enum
-from signal import raise_signal
-from retry import retry
-from datetime import date
-from cloudant.client import Cloudant
-from cloudant.query import Query
-from cloudant.adapters import Replay429Adapter
-from cloudant.database import CloudantDatabase
-from requests import HTTPError, ConnectionError
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import CheckConstraint
 
-# get configuration from environment (12-factor)
-ADMIN_PARTY = os.environ.get("ADMIN_PARTY", "False").lower() == "true"
-CLOUDANT_HOST = os.environ.get("CLOUDANT_HOST", "localhost")
-CLOUDANT_USERNAME = os.environ.get("CLOUDANT_USERNAME", "admin")
-CLOUDANT_PASSWORD = os.environ.get("CLOUDANT_PASSWORD", "pass")
+logger = logging.getLogger("flask.app")
 
-# global variables for retry (must be int)
-RETRY_COUNT = int(os.environ.get("RETRY_COUNT", 10))
-RETRY_DELAY = int(os.environ.get("RETRY_DELAY", 1))
-RETRY_BACKOFF = int(os.environ.get("RETRY_BACKOFF", 2))
+# Create the SQLAlchemy object to be initialized later in init_db()
+db = SQLAlchemy()
 
+
+def init_db(app):
+    """Initialize the SQLAlchemy app"""
+    Product.init_db(app)
 
 class DatabaseConnectionError(Exception):
     """Custom Exception when database connection fails"""
-
+    pass
 
 class DataValidationError(Exception):
-    """Custom Exception with data validation fails"""
+    """Used for an data validation errors when deserializing"""
 
+    pass
 
-
-class Product:
+class Product(db.Model):
     """
     Class that represents a Product
 
-    This version uses a NoSQL database for persistence
+    This version uses a relational database for persistence which is hidden
+    from us by SQLAlchemy's object relational mappings (ORM)
     """
 
-    logger = logging.getLogger(__name__)
-    client: Cloudant = None
-    database: CloudantDatabase = None
+    ##################################################
+    # Table Schema
+    ##################################################
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(63), nullable=False)
+    description = db.Column(db.String(63))
+    price = db.Column(db.Integer, nullable=False, default=100)
+    # __table__args = (
+    #   CheckConstraint(price >= 0, name='check_price_positive'), {}
+    # )
+    # we should consider about the negative price in next sprint
 
-    def __init__(
-        self,
-        name: str = None,
-        category: str = None,
-        available: bool = True,
-        price: int = 0,
-        description: str = None,
-        stock: int = 0
-    ):
-        """Constructor"""
-        self.id = None  # pylint: disable=invalid-name
-        self.name = name
-        self.category = category
-        self.available = available
-        self.price = price
-        self.description = description
-        self.stock = stock
+    ##################################################
+    # INSTANCE METHODS
+    ##################################################
 
     def __repr__(self):
-        return f"<Product {self.name} id=[{self.id}]>"
+        return "<Product %r id=[%s]>" % (self.name, self.id)
 
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
     def create(self):
         """
-        Creates a new Product in the database
+        Creates a Product to the database
         """
-        if self.name is None:  # name is the only required field
-            raise DataValidationError("name attribute is not set")
+        logger.info("Creating %s", self.name)
+        # id must be none to generate next primary key
+        self.id = None 
+        db.session.add(self)
+        db.session.commit()
 
-        try:
-            document = self.database.create_document(self.serialize())
-        except HTTPError as err:
-            Product.logger.warning("Create failed: %s", err)
-            return
-
-        if document.exists():
-            self.id = document["_id"]
-
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
     def update(self):
-        """Updates a Product in the database"""
-        try:
-            document = self.database[self.id]
-        except KeyError:
-            document = None
-        if document:
-            document.update(self.serialize())
-            document.save()
+        """
+        Updates a Product to the database
+        """
+        logger.info("Saving %s", self.name)
+        #if not self.id:
+        #    raise DataValidationError("Update called with empty ID field")
+        db.session.commit()
 
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
     def delete(self):
-        """Deletes a Product from the database"""
-        try:
-            document = self.database[self.id]
-        except KeyError:
-            document = None
-        if document:
-            document.delete()
+        """Removes a Product from the database."""
+        logger.info("Deleting %s", self.name)
+        db.session.delete(self)
+        db.session.commit()
+
+    def show(self):
+        """Show the product's information."""
+        logger.info(self)
 
     def serialize(self) -> dict:
-        """serializes a Product into a dictionary"""
-        product = {
+        """Serializes a Product into a dictionary"""
+        return {
+            "id": self.id,
             "name": self.name,
-            "category": self.category,
-            "available": self.available,
-            "price": self.price,
             "description": self.description,
-            "stock": self.stock
+            "price": self.price,
         }
-        if self.id:
-            product["_id"] = self.id
-        return product
 
-    def deserialize(self, data: dict) -> None:
-        """deserializes a Product my marshalling the data.
-
-        :param data: a Python dictionary representing a Product.
+    def deserialize(self, data: dict):
         """
-        Product.logger.info("deserialize(%s)", data)
+        Deserializes a Product from a dictionary
+        Args:
+            data (dict): A dictionary containing the Product data
+        """
         try:
             self.name = data["name"]
-            self.category = data["category"]
-            if isinstance(data["available"], bool):
-                self.available = data["available"]
-            else:
-                raise DataValidationError("Invalid type for boolean [available]: " + str(type(data["available"])))
-            self.price = data["price"]
             self.description = data["description"]
-            self.stock = data["stock"]
+            # Check the validity of the price attribute
+            if isinstance(data["price"], int):
+                self.price = data["price"]
+            else:
+                raise DataValidationError(
+                    "Invalid type for boolean [price]: "
+                    + str(type(data["price"]))
+                )
+        #except AttributeError as error:
+        #    raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
-            raise DataValidationError("Invalid product: missing " + error.args[0])
+            raise DataValidationError(
+                "Invalid Product: missing " + error.args[0]
+            )
         except TypeError as error:
-            raise DataValidationError("Invalid product: body of request contained bad or no data")
-
-        # if there is no id and the data has one, assign it
-        if not self.id and "_id" in data:
-            self.id = data["_id"]
-
+            raise DataValidationError(
+                "Invalid Product: body of request contained bad or no data"
+            )
         return self
 
-    ######################################################################
-    #  S T A T I C   D A T A B S E   M E T H O D S
-    ######################################################################
+    ##################################################
+    # CLASS METHODS
+    ##################################################
 
     @classmethod
-    def connect(cls):
-        """Connect to the server"""
-        cls.client.connect()
+    def init_db(cls, app: Flask):
+        """Initializes the database session
 
-    @classmethod
-    def disconnect(cls):
-        """Disconnect from the server"""
-        cls.client.disconnect()
+        :param app: the Flask app
+        :type data: Flask
 
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def create_query_index(cls, field_name: str, order: str = "asc"):
-        """Creates a new query index for searching"""
-        cls.database.create_query_index(index_name=field_name, fields=[{field_name: order}])
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def remove_all(cls):
-        """Removes all documents from the database (use for testing)"""
-        for document in cls.database:
-            document.delete()
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def all(cls):
-        """Query that returns all Products"""
-        results = []
-        for doc in cls.database:
-            product = Product().deserialize(doc)
-            product.id = doc["_id"]
-            results.append(product)
-        return results
-
-
-    ######################################################################
-    #  F I N D E R   M E T H O D S
-    ######################################################################
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def find_by(cls, **kwargs):
-        """Find records using selector"""
-        query = Query(cls.database, selector=kwargs)
-        results = []
-        for doc in query.result:
-            product = Product()
-            product.deserialize(doc)
-            results.append(product)
-        return results
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def find(cls, product_id: str):
-        """Query that finds Products by their id"""
-        try:
-            document = cls.database[product_id]
-            # Cloudant doesn't delete documents. :( It leaves the _id with no data
-            # so we must validate that _id that came back has a valid _rev
-            # if this next line throws a KeyError the document was deleted
-            _ = document['_rev']
-            return Product().deserialize(document)
-        except KeyError:
-            return None
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def find_by_name(cls, name: str):
-        """Query that finds Products by their name"""
-        return cls.find_by(name=name)
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def find_by_category(cls, category: str):
-        """Query that finds Products by their category"""
-        return cls.find_by(category=category)
-
-    @classmethod
-    @retry(HTTPError, delay=RETRY_DELAY, backoff=RETRY_BACKOFF, tries=RETRY_COUNT, logger=logger)
-    def find_by_availability(cls, available: bool = True):
-        """Query that finds Products by their availability"""
-        return cls.find_by(available=available)
-    
-
-    ############################################################
-    #  C L O U D A N T   D A T A B A S E   C O N N E C T I O N
-    ############################################################
-
-    @staticmethod
-    def init_db(dbname: str = "products"):
         """
-        Initialized Cloudant database connection
+        logger.info("Initializing database")
+        # Initialize SQLAlchemy from the Flask app
+        db.init_app(app)
+        app.app_context().push()
+        db.create_all()  # make sqlalchemy tables
+
+    @classmethod
+    def all(cls) -> list:
+        """Returns all of the Products in the database"""
+        logger.info("Processing all Products")
+        return cls.query.all()
+
+    @classmethod
+    def find(cls, product_id: int):
+        """Finds a Product by it's ID
+
+        :param product_id: the id of the Product to find
+        :type product_id: int
+
+        :return: an instance with the product_id, or None if not found
+        :type: Product
+
         """
-        opts = {}
-        # Try and get VCAP from the environment
-        if "VCAP_SERVICES" in os.environ:
-            Product.logger.info("Found Cloud Foundry VCAP_SERVICES bindings")
-            vcap_services = json.loads(os.environ["VCAP_SERVICES"])
-            # Look for Cloudant in VCAP_SERVICES
-            for service in vcap_services:
-                if service.startswith("cloudantNoSQLDB"):
-                    opts = vcap_services[service][0]["credentials"]
+        logger.info("Processing lookup for id %s ...", product_id)
+        return cls.query.get(product_id)
 
-        # if VCAP_SERVICES isn't found, maybe we are running on Kubernetes?
-        if not opts and "BINDING_CLOUDANT" in os.environ:
-            Product.logger.info("Found Kubernetes BINDING_CLOUDANT bindings")
-            opts = json.loads(os.environ["BINDING_CLOUDANT"])
+    @classmethod
+    def find_or_404(cls, product_id: int):
+        """Find a Product by it's id
 
-        # If Cloudant not found in VCAP_SERVICES or BINDING_CLOUDANT
-        # get it from the CLOUDANT_xxx environment variables
-        if not opts:
-            Product.logger.info("VCAP_SERVICES and BINDING_CLOUDANT undefined.")
-            opts = {
-                "username": CLOUDANT_USERNAME,
-                "password": CLOUDANT_PASSWORD,
-                "host": CLOUDANT_HOST,
-                "port": 5984,
-                "url": "http://" + CLOUDANT_HOST + ":5984/",
-            }
+        :param product_id: the id of the Product to find
+        :type product_id: int
 
-        if any(k not in opts for k in ("host", "username", "password", "port", "url")):
-            raise DatabaseConnectionError(
-                "Error - Failed to retrieve options. " "Check that app is bound to a Cloudant service."
-            )
+        :return: an instance with the product_id, or 404_NOT_FOUND if not found
+        :type: Product
 
-        Product.logger.info("Cloudant Endpoint: %s", opts["url"])
-        try:
-            if ADMIN_PARTY:
-                Product.logger.info("Running in Admin Party Mode...")
-            Product.client = Cloudant(
-                opts["username"],
-                opts["password"],
-                url=opts["url"],
-                connect=True,
-                auto_renew=True,
-                admin_party=ADMIN_PARTY,
-                adapter=Replay429Adapter(retries=10, initialBackoff=0.01),
-            )
+        """
+        logger.info("Processing lookup or 404 for id %s ...", product_id)
+        return cls.query.get_or_404(product_id)
 
-        except ConnectionError:
-            raise DatabaseConnectionError("Cloudant service could not be reached")
+    @classmethod
+    def find_by_name(cls, name: str) -> list:
+        """Returns all Products with the given name
 
-        # Create database if it doesn't exist
-        try:
-            Product.database = Product.client[dbname]
-        except KeyError:
-            # Create a database using an initialized client
-            Product.database = Product.client.create_database(dbname)
-        # check for success
-        if not Product.database.exists():
-            raise DatabaseConnectionError("Database [{}] could not be obtained".format(dbname))
+        :param name: the name of the Products you want to match
+        :type name: str
+
+        :return: a collection of Products with that name
+        :type: list
+
+        """
+        logger.info("Processing name query for %s ...", name)
+        return cls.query.filter(cls.name == name)
+
