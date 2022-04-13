@@ -212,9 +212,6 @@ class TestProductModel(unittest.TestCase):
     @patch('service.models.Product.init_db')
     def test_connection_error(self, bad_mock):
         """Test Connection error handler"""
-        bad_mock.side_effect = DatabaseConnectionError() 
+        bad_mock.side_effect = DatabaseConnectionError()
+        print(bad_mock.get_json())
         self.assertRaises(DatabaseConnectionError, Product.init_db)
-
-    ######################################################################
-    #  T E S T   E R R O R   H A N D L E R S
-    ######################################################################
