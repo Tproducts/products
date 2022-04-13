@@ -249,3 +249,9 @@ class TestProductServer(unittest.TestCase):
         resp = self.app.post(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    def test_healthcheck(self):
+        """Check healthcheck function"""
+        resp = self.app.get("/healthcheck")
+        data = resp.get_json()
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(data['message'], "Healthy")
