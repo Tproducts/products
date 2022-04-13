@@ -34,14 +34,6 @@ def healthcheck():
     return make_response(jsonify(status=200, message="Healthy"), status.HTTP_200_OK)
 
 ######################################################################
-# GET HEALTH CHECK
-######################################################################
-@app.route("/healthcheck")
-def healthcheck():
-    """Let them know our heart is still beating"""
-    return make_response(jsonify(status=200, message="Healthy"), status.HTTP_200_OK)
-
-######################################################################
 # GET INDEX
 ######################################################################
 @app.route("/")
