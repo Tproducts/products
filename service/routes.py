@@ -14,14 +14,6 @@ from flask import jsonify, request, url_for, make_response, abort
 from .utils import status  # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Product
-
-# Import Flask application
-from . import app
-from service.models import Product
-from .utils import status  # HTTP Status Codes
-from werkzeug.exceptions import NotFound
-from service.models import Product
-
 # Import Flask application
 from . import app
 

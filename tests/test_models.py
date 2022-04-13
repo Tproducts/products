@@ -214,3 +214,7 @@ class TestProductModel(unittest.TestCase):
         """Test Connection error handler"""
         bad_mock.side_effect = DatabaseConnectionError() 
         self.assertRaises(DatabaseConnectionError, Product.init_db)
+
+    ######################################################################
+    #  T E S T   E R R O R   H A N D L E R S
+    ######################################################################
