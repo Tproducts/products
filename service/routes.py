@@ -11,7 +11,7 @@ DELETE /products/{id} - deletes a Product record in the database
 """
 
 from flask import jsonify, request, url_for, make_response, abort
-from . import status  # HTTP Status Codes
+from .utils import status  # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Product
 
@@ -19,21 +19,30 @@ from service.models import Product
 from . import app
 
 ######################################################################
+# GET HEALTH CHECK
+######################################################################
+@app.route("/healthcheck")
+def healthcheck():
+    """Let them know our heart is still beating"""
+    return make_response(jsonify(status=200, message="Healthy"), status.HTTP_200_OK)
+
+######################################################################
 # GET INDEX
 ######################################################################
 @app.route("/")
 def index():
     """Root URL response"""
-    app.logger.info("Request for Root URL")
-    return (
-        jsonify(
-            name="Product REST API Service",
-            version="1.0",
-            list_products=url_for("list_products", _external=True),
-            create_products="You can run the 'post.py' program located in the 'tests' folder to create some new products"
-        ),
-        status.HTTP_200_OK,
-    )
+    # app.logger.info("Request for Root URL")
+    # return (
+    #     jsonify(
+    #         name="Product REST API Service",
+    #         version="1.0",
+    #         list_products=url_for("list_products", _external=True),
+    #         create_products="You can run the 'post.py' program located in the 'tests' folder to create some new products"
+    #     ),
+    #     status.HTTP_200_OK,
+    # )
+    return app.send_static_file("index.html")
 
 
 ######################################################################

@@ -13,7 +13,7 @@ import logging
 import unittest
 
 # from unittest.mock import MagicMock, patch
-from service import status  # HTTP Status Codes
+from service.utils import status  # HTTP Status Codes
 from service.models import db, init_db
 from service.routes import app
 from .factories import ProductFactory
