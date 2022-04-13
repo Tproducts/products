@@ -1,5 +1,5 @@
 """
-Product Factory to make fake objects for testing
+Product Factory class for making fake objects
 """
 import factory
 from factory.fuzzy import FuzzyChoice
@@ -9,15 +9,10 @@ from service.models import Product
 class ProductFactory(factory.Factory):
     """Creates fake products that you don't have to feed"""
 
-    class Meta:  # pylint: disable=too-few-public-methods
-        """Maps factory to data model"""
-
+    class Meta:
         model = Product
 
-    name = factory.Faker("word")
-    category = FuzzyChoice(choices=["Phone", "Laptop", "Earphone", "Keyboard", "Mouse"])
-    # available = FuzzyChoice(choices=[True, False])
-    price = FuzzyChoice(choices=[50, 100, 200, 1000])
-    description = factory.Faker("sentence")
-    stock = FuzzyChoice(choices=[0, 1, 2, 3])
-    available = False if stock == 0 else True
+    id = factory.Sequence(lambda n: n)
+    name = FuzzyChoice(choices=["iPhone13", "iPad", "Macbook Air", "Macbook Pro"])
+    description = factory.Faker("word")
+    price = FuzzyChoice(choices=[100, 200, 300, 400])
