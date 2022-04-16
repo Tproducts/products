@@ -1,6 +1,7 @@
 # Product Team Readme file
 
 [![Build Status](https://github.com/Tproducts/products/workflows/TDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
+[![NPM version][npm-image]][npm-url]
 
 ## The Roles of our Scrum team for Sprint 1
 

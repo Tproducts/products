@@ -62,3 +62,5 @@ jobs:
         uses: codecov/codecov-action@v2 
         with:
           version: "v0.1.13"
+          fail_ci_if_error: true
+          token: ${{ c81f1692-252f-4dde-b16a-76e05edb3790 }} # not required for public repos
