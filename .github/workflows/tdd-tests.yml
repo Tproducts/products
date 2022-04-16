@@ -18,7 +18,7 @@ jobs:
     container: python:3.9-slim
 
     services:
-      couchdb:
+      postgres:
         image: postgres:alpine
         ports:
           - 5432:5432
