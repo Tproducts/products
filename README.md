@@ -1,6 +1,7 @@
 # Product Team Readme file
 
 [![Build Status](https://github.com/Tproducts/products/workflows/TDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
+[![Build Status](https://github.com/Tproducts/products/workflows/BDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
 [![codecov.io](https://codecov.io/github/Tproducts/products/coverage.svg?branch=main)](https://codecov.io/github/Tproducts/products?branch=main)
 
 ## The Roles of our Scrum team for Sprint 1
