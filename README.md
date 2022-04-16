@@ -1,5 +1,7 @@
 # Product Team Readme file
 
+[![Build Status](https://github.com/Tproducts/products/actions/workflows/tdd-tests.yml/badge.svg)](https://github.com/Tproducts/products/actions)
+
 ## The Roles of our Scrum team for Sprint 1
 
 - Product Owner : Jingzhou Wang
