@@ -9,9 +9,12 @@ Product - A Product used in eCommerce application
 
 Attributes:
 -----------
+id (integer) - The id of the product
 name (string) - The name of the product
+category (string) - The category of the product
 description (string) - A brief description which is used to describe a product
-price (Integer) - The price of the product
+price (integer) - The price of the product
+stock (integer) - Remaining stock of the product
 
 """
 import logging
@@ -51,8 +54,10 @@ class Product(db.Model):
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
+    category = db.Column(db.String(63))
     description = db.Column(db.String(63))
     price = db.Column(db.Integer, nullable=False, default=100)
+    stock = db.Column(db.Integer, nullable=False)
     # __table__args = (
     #   CheckConstraint(price >= 0, name='check_price_positive'), {}
     # )
@@ -99,8 +104,10 @@ class Product(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            "category": self.category,
             "description": self.description,
             "price": self.price,
+            "stock": self.stock
         }
 
     def deserialize(self, data: dict):
@@ -111,7 +118,9 @@ class Product(db.Model):
         """
         try:
             self.name = data["name"]
+            self.category = data["category"]
             self.description = data["description"]
+            self.stock = data["stock"]
             # Check the validity of the price attribute
             if isinstance(data["price"], int):
                 self.price = data["price"]
@@ -198,3 +207,16 @@ class Product(db.Model):
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
 
+    @classmethod
+    def find_by_category(cls, category: str) -> list:
+        """Returns all Products with the given category
+
+        :param category: the category of the Products you want to match
+        :type category: str
+
+        :return: a collection of Products with that category
+        :type: list
+
+        """
+        logger.info("Processing name query for %s ...", category)
+        return cls.query.filter(cls.name == category)
