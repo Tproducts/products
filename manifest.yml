@@ -8,7 +8,7 @@ applications:
   instances: 1
   memory: 128M
   hostname: lab-flask-tdd
-  domain: us-south.cf.appdomain.cloud
+  domain: nyu-products-service-sp2203.us-south.cf.appdomain.cloud
   disk_quota: 1024M
   buildpack: python_buildpack
   timeout: 180
