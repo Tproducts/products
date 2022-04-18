@@ -219,4 +219,4 @@ class Product(db.Model):
 
         """
         logger.info("Processing name query for %s ...", category)
-        return cls.query.filter(cls.name == category)
+        return cls.query.filter(cls.category == category)

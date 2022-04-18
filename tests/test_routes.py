@@ -18,6 +18,7 @@ from service.models import db, init_db
 from service.routes import app
 from .factories import ProductFactory
 
+
 # Disable all but critical errors during normal test run
 # uncomment for debugging failing tests
 logging.disable(logging.CRITICAL)
@@ -118,8 +119,32 @@ class TestProductServer(unittest.TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        print('Data:', data[0]['name'])
         self.assertEqual(data[0]["name"], test_product['name'])
+        self.assertEqual(data[0]["category"], test_product['category'])
+        self.assertEqual(data[0]["description"], test_product['description'])
+        self.assertEqual(data[0]["price"], test_product['price'])
+        self.assertEqual(data[0]["stock"], test_product['stock'])
+
+
+    def test_get_product_with_category(self):
+        test_product = ProductFactory()
+        logging.debug(test_product)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        test_product = resp.get_json()
+        resp = self.app.get(
+            "/products?category={}".format(test_product['category']), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data[0]["name"], test_product['name'])
+        self.assertEqual(data[0]["category"], test_product['category'])
+        self.assertEqual(data[0]["description"], test_product['description'])
+        self.assertEqual(data[0]["price"], test_product['price'])
+        self.assertEqual(data[0]["stock"], test_product['stock'])
 
     def test_create_product(self):
         """Create a new Product"""

@@ -203,6 +203,18 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(products[0].price, 100)
         self.assertEqual(products[0].stock, 1)
 
+    def test_find_by_category(self):
+        """Find a Product by Category"""
+        Product(name="iPhone8 Plus", category="Phone", description="test1", price=100, stock=1).create()
+        Product(name="iPad Pro", category="Pad", description="test2", price=200, stock=2).create()
+        products = Product.find_by_category("Phone")
+        self.assertEqual(products[0].name, "iPhone8 Plus")
+        self.assertEqual(products[0].category, "Phone")
+        self.assertEqual(products[0].description, "test1")
+        self.assertEqual(products[0].price, 100)
+        self.assertEqual(products[0].stock, 1)
+
+
     def test_find_or_404_found(self):
         """Find or return 404 found"""
         products = ProductFactory.create_batch(3)
