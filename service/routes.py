@@ -10,6 +10,7 @@ PUT /products/{id} - updates a Product record in the database
 DELETE /products/{id} - deletes a Product record in the database
 """
 
+from unicodedata import category
 from flask import jsonify, request, url_for, make_response, abort
 from .utils import status  # HTTP Status Codes
 from werkzeug.exceptions import NotFound
@@ -50,12 +51,19 @@ def index():
 @app.route("/products", methods=["GET"])
 def list_products():
     """Returns all of the Products"""
-    app.logger.info("Request for product list")
+    app.logger.info("Request to list products...")
+
     products = []
     name = request.args.get("name")
+    category = request.args.get("category")
     if name:
+        app.logger.info("Find by name: %s", name)
         products = Product.find_by_name(name)
+    elif category:
+        app.logger.info("Find by category: %s", category)
+        products = Product.find_by_category(category)
     else:
+        app.logger.info("Find all")
         products = Product.all()
 
     results = [product.serialize() for product in products]

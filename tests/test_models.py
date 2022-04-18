@@ -9,7 +9,7 @@ from itertools import product
 import os
 import logging
 from sqlite3 import InternalError
-from unicodedata import name
+from unicodedata import category, name
 import unittest
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -60,19 +60,21 @@ class TestProductModel(unittest.TestCase):
 
     def test_create_a_product(self):
         """Create a product and assert that it exists"""
-        product = Product(name="iPhone", description="this is test product", price=100)
+        product = Product(name="iPhone", category="Phone", description="this is test product", price=1099, stock=5)
         self.assertTrue(product != None)
         self.assertEqual(product.id, None)
         self.assertEqual(product.name, "iPhone")
+        self.assertEqual(product.category, "Phone")
         self.assertEqual(product.description, "this is test product")
-        self.assertEqual(product.price, 100)
+        self.assertEqual(product.price, 1099)
+        self.assertEqual(product.stock, 5)
         self.assertEqual(product.__repr__(), "<Product %r id=[%s]>" % (product.name, product.id))
 
     def test_add_a_product(self):
         """Create a product and add it to the database"""
         products = Product.all()
         self.assertEqual(products, [])
-        product = Product(name="iPhone", description="this is test product", price=100)
+        product = Product(name="iPhone", category="Phone", description="this is test product", price=1099, stock=5)
         self.assertTrue(product != None)
         self.assertEqual(product.id, None)
         product.create()
@@ -124,30 +126,38 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(data["id"], product.id)
         self.assertIn("name", data)
         self.assertEqual(data["name"], product.name)
+        self.assertIn("category", data)
+        self.assertEqual(data["category"], product.category)
         self.assertIn("description", data)
         self.assertEqual(data["description"], product.description)
         self.assertIn("price", data)
         self.assertEqual(data["price"], product.price)
+        self.assertIn("stock", data)
+        self.assertEqual(data["stock"], product.stock)
 
     def test_deserialize_a_product(self):
         """Test deserialization of a Product"""
         data = {
             "id": 1,
             "name": "Macbook Air",
+            "category": "Laptop",
             "description": "This product is used for test",
             "price": 666,
+            "stock": 3
         }
         product = Product()
         product.deserialize(data)
         self.assertNotEqual(product, None)
         self.assertEqual(product.id, None)
         self.assertEqual(product.name, "Macbook Air")
+        self.assertEqual(product.category, "Laptop")
         self.assertEqual(product.description, "This product is used for test")
         self.assertEqual(product.price, 666)
+        self.assertEqual(product.stock, 3)
 
     def test_deserialize_missing_data(self):
         """Test deserialization of a Product with missing data"""
-        data = {"id": 1, "name": "Macbook Air", "description": "This product is used for test"}
+        data = {"id": 1, "name": "Macbook Air", "category":"Laptop", "description": "This product is used for test"}
         product = Product()
         self.assertRaises(DataValidationError, product.deserialize, data)
 
@@ -177,16 +187,21 @@ class TestProductModel(unittest.TestCase):
         self.assertIsNot(product, None)
         self.assertEqual(product.id, products[1].id)
         self.assertEqual(product.name, products[1].name)
+        self.assertEqual(product.category, products[1].category)
+        self.assertEqual(product.description, products[1].description)
         self.assertEqual(product.price, products[1].price)
+        self.assertEqual(product.stock, products[1].stock)
 
     def test_find_by_name(self):
         """Find a Product by Name"""
-        Product(name="iPhone8 Plus", description="test1", price=100).create()
-        Product(name="iPad Pro", description="test2", price=200).create()
+        Product(name="iPhone8 Plus", category="Phone", description="test1", price=100, stock=1).create()
+        Product(name="iPad Pro", category="Pad", description="test2", price=200, stock=2).create()
         products = Product.find_by_name("iPhone8 Plus")
-        self.assertEqual(products[0].description, "test1")
         self.assertEqual(products[0].name, "iPhone8 Plus")
+        self.assertEqual(products[0].category, "Phone")
+        self.assertEqual(products[0].description, "test1")
         self.assertEqual(products[0].price, 100)
+        self.assertEqual(products[0].stock, 1)
 
     def test_find_or_404_found(self):
         """Find or return 404 found"""
@@ -198,7 +213,10 @@ class TestProductModel(unittest.TestCase):
         self.assertIsNot(product, None)
         self.assertEqual(product.id, products[1].id)
         self.assertEqual(product.name, products[1].name)
+        self.assertEqual(product.category, products[1].category)
         self.assertEqual(product.description, products[1].description)
+        self.assertEqual(product.price, products[1].price)
+        self.assertEqual(product.stock, products[1].stock)
 
     def test_find_or_404_not_found(self):
         """Find or return 404 NOT found"""
