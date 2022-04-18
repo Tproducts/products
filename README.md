@@ -5,7 +5,7 @@
 [![codecov.io](https://codecov.io/github/Tproducts/products/coverage.svg?branch=main)](https://codecov.io/github/Tproducts/products?branch=main)
 [![](https://img.shields.io/badge/language-Python-green.svg)]
 
-## The Roles of our Scrum team for Sprint 1
+## The Roles of our Scrum team
 
 - Product Owner : Jingzhou Wang
 - Scrum Master : Taowei Xia
