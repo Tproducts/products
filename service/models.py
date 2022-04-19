@@ -116,24 +116,21 @@ class Product(db.Model):
         Args:
             data (dict): A dictionary containing the Product data
         """
-        def is_float(s: str) -> bool:
-            """ Check if s is a float-format string. """
-            s = s.split('.')
-            if len(s) > 2:
-                return False
-            for substr in s:
-                if not substr.isdigit():
-                    return False
-            return True
-
+        print(data)
         try:
             self.name = data["name"]
             self.category = data["category"]
             self.description = data["description"]
             
             # Check the validity of the stock attribute
-            if data["stock"].isdigit():
-                self.stock = int(data["stock"])
+
+            # if isinstance(self.stock, int):
+            #     self.stock = data["stock"]
+            #     print(type(data["stock"]))
+            stock = data.get("stock", "")
+            if stock and stock.isdigit():
+                self.stock = int(stock)
+                # print(self.stock)
             else:
                 raise DataValidationError(
                     "Invalid type for integer [stock]: "
@@ -141,13 +138,12 @@ class Product(db.Model):
                 )
 
             # Check the validity of the price attribute
-            if is_float(data["price"]):
-                self.price = float(data["price"])
-            # if isinstance(data["price"], int):
-                # self.price = data["price"]
+            price = data.get("price", "")
+            if price and price.isdigit():
+                self.price = int(price)
             else:
                 raise DataValidationError(
-                    "Invalid type for float [price]: "
+                    "Invalid type for integer [price]: "
                     + str(type(data["price"]))
                 )
         #except AttributeError as error:

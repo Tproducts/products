@@ -138,12 +138,12 @@ class TestProductModel(unittest.TestCase):
     def test_deserialize_a_product(self):
         """Test deserialization of a Product"""
         data = {
-            "id": 1,
+            "id": "1",
             "name": "Macbook Air",
             "category": "Laptop",
-            "description": "This product is used for test",
-            "price": 666,
-            "stock": 3
+            "price": "666",
+            "stock": "3",
+            "description": "This product is used for test"
         }
         product = Product()
         product.deserialize(data)
