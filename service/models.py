@@ -128,7 +128,7 @@ class Product(db.Model):
             #     self.stock = data["stock"]
             #     print(type(data["stock"]))
             stock = data.get("stock", "")
-            if stock and stock.isdigit():
+            if isinstance(stock, int) or (stock and stock.isdigit()):
                 self.stock = int(stock)
                 # print(self.stock)
             else:
@@ -139,7 +139,7 @@ class Product(db.Model):
 
             # Check the validity of the price attribute
             price = data.get("price", "")
-            if price and price.isdigit():
+            if isinstance(price, int) or (price and price.isdigit()):
                 self.price = int(price)
             else:
                 raise DataValidationError(
