@@ -12,9 +12,9 @@ Attributes:
 id (integer) - The id of the product
 name (string) - The name of the product
 category (string) - The category of the product
-description (string) - A brief description which is used to describe a product
 price (integer) - The price of the product
 stock (integer) - Remaining stock of the product
+description (string) - A brief description which is used to describe a product
 
 """
 import logging
@@ -55,9 +55,9 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
     category = db.Column(db.String(63))
-    description = db.Column(db.String(63))
     price = db.Column(db.Integer, nullable=False, default=100)
     stock = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(63))
     # __table__args = (
     #   CheckConstraint(price >= 0, name='check_price_positive'), {}
     # )
@@ -105,9 +105,9 @@ class Product(db.Model):
             "id": self.id,
             "name": self.name,
             "category": self.category,
-            "description": self.description,
             "price": self.price,
-            "stock": self.stock
+            "stock": self.stock,
+            "description": self.description
         }
 
     def deserialize(self, data: dict):
@@ -116,17 +116,34 @@ class Product(db.Model):
         Args:
             data (dict): A dictionary containing the Product data
         """
+        print(data)
         try:
             self.name = data["name"]
             self.category = data["category"]
             self.description = data["description"]
-            self.stock = data["stock"]
-            # Check the validity of the price attribute
-            if isinstance(data["price"], int):
-                self.price = data["price"]
+            
+            # Check the validity of the stock attribute
+
+            # if isinstance(self.stock, int):
+            #     self.stock = data["stock"]
+            #     print(type(data["stock"]))
+            stock = data.get("stock", "")
+            if stock and stock.isdigit():
+                self.stock = int(stock)
+                # print(self.stock)
             else:
                 raise DataValidationError(
-                    "Invalid type for boolean [price]: "
+                    "Invalid type for integer [stock]: "
+                    + str(type(data["stock"]))
+                )
+
+            # Check the validity of the price attribute
+            price = data.get("price", "")
+            if price and price.isdigit():
+                self.price = int(price)
+            else:
+                raise DataValidationError(
+                    "Invalid type for integer [price]: "
                     + str(type(data["price"]))
                 )
         #except AttributeError as error:
