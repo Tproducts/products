@@ -30,7 +30,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions
 
-ID_PREFIX = 'pet_'
+ID_PREFIX = 'product_'
 
 @when('I visit the "home page"')
 def step_impl(context):
@@ -137,8 +137,8 @@ def step_impl(context, message):
 ##################################################################
 # This code works because of the following naming convention:
 # The id field for text input in the html is the element name
-# prefixed by ID_PREFIX so the Name field has an id='pet_name'
-# We can then lowercase the name and prefix with pet_ to get the id
+# prefixed by ID_PREFIX so the Name field has an id='product_name'
+# We can then lowercase the name and prefix with product_ to get the id
 ##################################################################
 
 @then('I should see "{text_string}" in the "{element_name}" field')

@@ -15,9 +15,9 @@
 ######################################################################
 
 """
-Pet Steps
+Product Steps
 
-Steps file for Pet.feature
+Steps file for Product.feature
 
 For information on Waiting until elements are present in the HTML see:
     https://selenium-python.readthedocs.io/waits.html
@@ -27,19 +27,19 @@ import requests
 from behave import given
 from compare import expect
 
-@given('the following pets')
+@given('the following products')
 def step_impl(context):
-    """ Delete all Pets and load new ones """
+    """ Delete all Products and load new ones """
     headers = {'Content-Type': 'application/json'}
-    # list all of the pets and delete them one by one
-    context.resp = requests.get(context.base_url + '/pets', headers=headers)
+    # list all of the products and delete them one by one
+    context.resp = requests.get(context.base_url + '/products', headers=headers)
     expect(context.resp.status_code).to_equal(200)
-    for pet in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/pets/' + str(pet["_id"]), headers=headers)
+    for product in context.resp.json():
+        context.resp = requests.delete(context.base_url + '/products/' + str(product["_id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
     
-    # load the database with new pets
-    create_url = context.base_url + '/pets'
+    # load the database with new products
+    create_url = context.base_url + '/products'
     for row in context.table:
         data = {
             "name": row['name'],
