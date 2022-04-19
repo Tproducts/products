@@ -11,6 +11,9 @@ from flask import Flask
 # Create Flask application
 app = Flask(__name__)
 app.config.from_object("config")
+app.logger.info(50 * "*")
+app.logger.info(app.config['SQLALCHEMY_DATABASE_URI'])
+app.logger.info(50 * "*")
 
 # Import the routes After the Flask app is created
 from service import routes, models
