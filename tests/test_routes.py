@@ -139,7 +139,7 @@ class TestProductServer(unittest.TestCase):
             new_product["description"], test_product.description, "Description do not match"
         )
         self.assertEqual(
-            new_product["price"], test_product.price, "Price does not match"
+            new_product["price"], int(test_product.price), "Price does not match"
         )
         # Check that the location header was correct
         resp = self.app.get(location, content_type=CONTENT_TYPE_JSON)
@@ -150,7 +150,7 @@ class TestProductServer(unittest.TestCase):
             new_product["description"], test_product.description, "Description do not match"
         )
         self.assertEqual(
-            new_product["price"], test_product.price, "Price does not match"
+            new_product["price"], int(test_product.price), "Price does not match"
         )
 
     def test_update_product(self):
