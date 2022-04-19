@@ -9,11 +9,11 @@ $(function () {
         $("#product_id").val(res._id);
         $("#product_name").val(res.name);
         $("#product_category").val(res.category);
-        if (res.available == true) {
-            $("#product_available").val("true");
-        } else {
-            $("#product_available").val("false");
-        }
+        // if (res.available == true) {
+        //     $("#product_available").val("true");
+        // } else {
+        //     $("#product_available").val("false");
+        // }
         $("#product_price").val(res.price);
         $("#product_stock").val(res.stock);
         $("#product_description").val(res.description);
@@ -23,7 +23,7 @@ $(function () {
     function clear_form_data() {
         $("#product_name").val("");
         $("#product_category").val("");
-        $("#product_available").val("");
+        // $("#product_available").val("");
         $("#product_price").val("");
         $("#product_stock").val("");
         $("#product_description").val("");
@@ -43,7 +43,7 @@ $(function () {
 
         let name       = $("#product_name").val();
         let category   = $("#product_category").val();
-        let available  = $("#product_available").val() == "true";
+        // let available  = $("#product_available").val() == "true";
         let price      = $("#product_price").val();
         let stock      = $("#product_stock").val();
         let description= $("#product_description").val();
@@ -51,7 +51,7 @@ $(function () {
         let data = {
             "name": name,
             "category": category,
-            "available": available,
+            // "available": available,
             "price" : price,
             "stock" : stock,
             "description" : description
@@ -86,7 +86,7 @@ $(function () {
         let product_id = $("#product_id").val();
         let name       = $("#product_name").val();
         let category   = $("#product_category").val();
-        let available  = $("#product_available").val() == "true";
+        // let available  = $("#product_available").val() == "true";
         let price      = $("#product_price").val();
         let stock      = $("#product_stock").val();
         let description= $("#product_description").val();
@@ -94,7 +94,7 @@ $(function () {
         let data = {
             "name": name,
             "category": category,
-            "available": available,
+            // "available": available,
             "price" : price,
             "stock" : stock,
             "description" : description
@@ -138,7 +138,7 @@ $(function () {
         })
 
         ajax.done(function(res){
-            //alert(res.toSource())
+            // alert(res.toSource())
             update_form_data(res)
             flash_message("Success")
         });
@@ -195,7 +195,7 @@ $(function () {
 
         let name      = $("#product_name").val();
         let category  = $("#product_category").val();
-        let available = $("#product_available").val() == "true";
+        // let available = $("#product_available").val() == "true";
 
         let queryString = ""
 
@@ -209,13 +209,13 @@ $(function () {
                 queryString += 'category=' + category
             }
         }
-        if (available) {
-            if (queryString.length > 0) {
-                queryString += '&available=' + available
-            } else {
-                queryString += 'available=' + available
-            }
-        }
+        // if (available) {
+        //     if (queryString.length > 0) {
+        //         queryString += '&available=' + available
+        //     } else {
+        //         queryString += 'available=' + available
+        //     }
+        // }
 
         $("#flash_message").empty();
 
@@ -234,15 +234,15 @@ $(function () {
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Name</th>'
             table += '<th class="col-md-2">Category</th>'
-            table += '<th class="col-md-2">Available</th>'
             table += '<th class="col-md-2">Price</th>'
             table += '<th class="col-md-2">Stock</th>'
-            table += '<th class="col-md-2">Description</th>'
+            table += '<th class="col-md-4">Description</th>'
             table += '</tr></thead><tbody>'
             let firstProduct = "";
             for(let i = 0; i < res.length; i++) {
                 let product = res[i];
-                table +=  `<tr id="row_${i}"><td>${product._id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.available}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.description}</td></tr>`;
+                // console.log(product);
+                table +=  `<tr id="row_${i}"><td>${product.id}</td><td>${product.name}</td><td>${product.category}</td><td>${product.price}</td><td>${product.stock}</td><td>${product.description}</td></tr>`;
                 if (i == 0) {
                     firstProduct= product;
                 }
