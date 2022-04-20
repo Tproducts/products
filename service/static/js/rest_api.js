@@ -9,11 +9,6 @@ $(function () {
         $("#product_id").val(res._id);
         $("#product_name").val(res.name);
         $("#product_category").val(res.category);
-        // if (res.available == true) {
-        //     $("#product_available").val("true");
-        // } else {
-        //     $("#product_available").val("false");
-        // }
         $("#product_price").val(res.price);
         $("#product_stock").val(res.stock);
         $("#product_description").val(res.description);
