@@ -54,18 +54,6 @@ jobs:
           python -m pip install --upgrade pip wheel
           pip install -r requirements.txt
 
-#       - name: Run the server locally
-#         run: |
-#           echo "\n*** CREATING TEST DB ***\n"
-#           curl -X PUT postgresql://postgres:postgres@postgres:5432/testdb
-#           echo "\n*** STARTING APPLICATION ***\n"
-#           gunicorn --log-level=critical --bind=0.0.0.0:8080 service:app &
-#           sleep 5
-#           curl -I http://localhost:8080/
-#           echo "\n*** SERVER IS RUNNING ***"
-#         env:
-#           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/testdb"
-
       - name: Run the server locally
         run: |
           echo "\n*** STARTING APPLICATION ***\n"
