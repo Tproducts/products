@@ -35,7 +35,7 @@ def step_impl(context):
     context.resp = requests.get(context.base_url + '/products', headers=headers)
     expect(context.resp.status_code).to_equal(200)
     for product in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/products/' + str(product["_id"]), headers=headers)
+        context.resp = requests.delete(context.base_url + '/products/' + str(product["id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
     
     # load the database with new products
@@ -44,9 +44,9 @@ def step_impl(context):
         data = {
             "name": row['name'],
             "category": row['category'],
-            "available": row['available'] in ['True', 'true', '1'],
-            "gender": row['gender'],
-            "birthday": row['birthday']
+            "price": row['price'],
+            "stock": row['stock'],
+            "description": row['description']
         }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)

@@ -57,7 +57,7 @@ class Product(db.Model):
     category = db.Column(db.String(63))
     price = db.Column(db.Integer, nullable=False, default=100)
     stock = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String(63))
+    description = db.Column(db.String(128))
     # __table__args = (
     #   CheckConstraint(price >= 0, name='check_price_positive'), {}
     # )

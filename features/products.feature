@@ -5,11 +5,10 @@ Feature: The product store service back-end
 
 Background:
     Given the following products
-        | name       | category | available | gender  | birthday   |
-        | fido       | dog      | True      | MALE    | 2019-11-18 |
-        | kitty      | cat      | True      | FEMALE  | 2020-08-13 |
-        | leo        | lion     | False     | MALE    | 2021-04-01 |
-        | sammy      | snake    | True      | UNKNOWN | 2018-06-04 |
+        |   name       |  category  | price | stock  |   description  |
+        | iPhone       |   Phone    | 1099  |   3    |     test 1     |
+        | Macbook Air  |   Laptop   | 1299  |   5    |     test 2     |
+        | AirPods      |  Earphone  |  99   |   10   |     test 3     |
 
 Scenario: The server is running
     When I visit the "Home Page"
@@ -18,11 +17,11 @@ Scenario: The server is running
 
 Scenario: Create a Product
     When I visit the "Home Page"
-    And I set the "Name" to "Happy"
-    And I set the "Category" to "Hippo"
-    And I select "False" in the "Available" dropdown
-    And I select "Male" in the "Gender" dropdown
-    And I set the "Birthday" to "06-16-2022"
+    And I set the "Name" to "iPad Pro"
+    And I set the "Category" to "Pad"
+    And I set the "Price" to "999"
+    And I set the "Stock" to "10"
+    And I set the "Description" to "iPad test"
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -32,51 +31,55 @@ Scenario: Create a Product
     And the "Category" field should be empty
     When I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "Happy" in the "Name" field
-    And I should see "Hippo" in the "Category" field
-    And I should see "False" in the "Available" dropdown
-    And I should see "Male" in the "Gender" dropdown
-    And I should see "2022-06-16" in the "Birthday" field
+    Then I should see "iPad Pro" in the "Name" field
+    And I should see "Pad" in the "Category" field
+    And I should see "999" in the "Price" field
+    And I should see "10" in the "Stock" field
+    And I should see "iPad test" in the "Description" field
 
 Scenario: List all products
     When I visit the "Home Page"
     And I press the "Search" button
-    Then I should see "fido" in the results
-    And I should see "kitty" in the results
-    And I should not see "leo" in the results
+    Then I should see "iPhone" in the results
+    And I should see "Macbook Air" in the results
+    And I should not see "Apple TV" in the results
 
-Scenario: Search for dogs
+Scenario: Search for phones
     When I visit the "Home Page"
-    And I set the "Category" to "dog"
+    And I set the "Category" to "Phone"
     And I press the "Search" button
-    Then I should see "fido" in the results
-    And I should not see "kitty" in the results
-    And I should not see "leo" in the results
-
-Scenario: Search for available
-    When I visit the "Home Page"
-    And I select "True" in the "Available" dropdown
-    And I press the "Search" button
-    Then I should see "fido" in the results
-    And I should see "kitty" in the results
-    And I should see "sammy" in the results
-    And I should not see "leo" in the results
+    Then I should see "iPhone" in the results
+    And I should not see "Macbook Air" in the results
+    And I should not see "Apple TV" in the results
 
 Scenario: Update a Product
     When I visit the "Home Page"
-    And I set the "Name" to "fido"
+    And I set the "Name" to "Macbook Air"
     And I press the "Search" button
-    Then I should see "fido" in the "Name" field
-    And I should see "dog" in the "Category" field
-    When I change "Name" to "Boxer"
+    Then I should see "Macbook Air" in the "Name" field
+    And I should see "Laptop" in the "Category" field
+    When I change "Name" to "Macbook Pro"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
     And I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "Boxer" in the "Name" field
+    Then I should see "Macbook Pro" in the "Name" field
     When I press the "Clear" button
     And I press the "Search" button
-    Then I should see "Boxer" in the results
-    Then I should not see "fido" in the results
+    Then I should see "Macbook Pro" in the results
+    Then I should not see "Macbook Air" in the results
+
+Scenario: Delete a Product
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "iPhone" in the results
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Product has been Deleted!"
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should not see "iPhone" in the results
