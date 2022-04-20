@@ -123,14 +123,9 @@ class Product(db.Model):
             self.description = data["description"]
             
             # Check the validity of the stock attribute
-
-            # if isinstance(self.stock, int):
-            #     self.stock = data["stock"]
-            #     print(type(data["stock"]))
             stock = data.get("stock", "")
             if isinstance(stock, int) or (stock and stock.isdigit()):
                 self.stock = int(stock)
-                # print(self.stock)
             else:
                 raise DataValidationError(
                     "Invalid type for integer [stock]: "
