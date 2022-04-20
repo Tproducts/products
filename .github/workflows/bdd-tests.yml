@@ -66,16 +66,15 @@ jobs:
 #         env:
 #           DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/testdb"
 
-      - name: Connect to PostgreSQL
-        # Runs a script that creates a PostgreSQL table, populates
-        # the table with data, and then retrieves the data.
-        run: node client.js
-        # Environment variables used by the `client.js` script to create a new PostgreSQL table.
+      - name: Run the server locally
+        run: |
+          echo "\n*** STARTING APPLICATION ***\n"
+          gunicorn --log-level=critical --bind=0.0.0.0:8000 service:app &
+          sleep 5
+          curl -I http://localhost:8000/
+          echo "\n*** SERVER IS RUNNING ***"
         env:
-          # The hostname used to communicate with the PostgreSQL service container
-          POSTGRES_HOST: postgres
-          # The default PostgreSQL port
-          POSTGRES_PORT: 5432
+          DATABASE_URI: "postgresql://postgres:postgres@postgres:5432/testdb"
 
       - name: Run unit tests with behave
         run: behave
