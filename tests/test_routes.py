@@ -108,8 +108,8 @@ class TestProductServer(unittest.TestCase):
         self.assertEqual(data["name"], test_product.name)
 
     def test_get_product_with_name(self):
+        """Query Products by name"""
         test_product = ProductFactory()
-        # test_product = Product(name="Xiaomi", category="Phone", description="this is test product", price=1099, stock=5)
         logging.debug(test_product)
         resp = self.app.post(
             BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
@@ -117,8 +117,12 @@ class TestProductServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
         test_product = resp.get_json()
+        # resp = self.app.get(
+        #     "/products?name={}".format(test_product['name']), content_type=CONTENT_TYPE_JSON
+        # )
         resp = self.app.get(
-            "/products?name={}".format(test_product['name']), content_type=CONTENT_TYPE_JSON
+            BASE_URL,
+            query_string="name={}".format(test_product['name'])
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
@@ -130,6 +134,7 @@ class TestProductServer(unittest.TestCase):
 
 
     def test_get_product_with_category(self):
+        """Query Products by category"""
         test_product = ProductFactory()
         logging.debug(test_product)
         resp = self.app.post(
@@ -138,8 +143,12 @@ class TestProductServer(unittest.TestCase):
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
         test_product = resp.get_json()
+        # resp = self.app.get(
+        #     "/products?category={}".format(test_product['category']), content_type=CONTENT_TYPE_JSON
+        # )
         resp = self.app.get(
-            "/products?category={}".format(test_product['category']), content_type=CONTENT_TYPE_JSON
+            BASE_URL,
+            query_string="category={}".format(test_product['category'])
         )
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
@@ -282,3 +291,45 @@ class TestProductServer(unittest.TestCase):
         data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertEqual(data['message'], "Healthy")
+    
+    def test_purchase_product(self):
+        """Purchase a Product"""
+        # create a product to purchase
+        test_product = Product(name="Xiaomi", category="Phone", description="Test for purchase", price=999, stock=5)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # purchase the product
+        new_product = resp.get_json()
+        stock_num = new_product["stock"]
+        logging.debug(new_product)
+        resp = self.app.put(
+            "/products/{}/purchase".format(new_product["id"]),
+            json=new_product,
+            content_type=CONTENT_TYPE_JSON,
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        purchased_product = resp.get_json()
+        self.assertEqual(purchased_product["stock"], stock_num - 1)
+
+    def test_purchase_product_out_of_stock(self):
+        """Purchase a out of stock Product"""
+        # create a product to purchase
+        test_product = Product(name="Xiaomi", category="Phone", description="Test for purchase", price=999, stock=0)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # purchase the product
+        new_product = resp.get_json()
+        stock_num = new_product["stock"]
+        logging.debug(new_product)
+        resp = self.app.put(
+            "/products/{}/purchase".format(new_product["id"]),
+            json=new_product,
+            content_type=CONTENT_TYPE_JSON,
+        )
+        self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)

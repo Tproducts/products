@@ -204,20 +204,13 @@ $(function () {
                 queryString += 'category=' + category
             }
         }
-        // if (available) {
-        //     if (queryString.length > 0) {
-        //         queryString += '&available=' + available
-        //     } else {
-        //         queryString += 'available=' + available
-        //     }
-        // }
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "GET",
             url: `/products?${queryString}`,
-            contentType: "application/json",
+            // contentType: "application/json", // can not be set to json when using Flask_RESTX
             data: ''
         })
 

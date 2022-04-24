@@ -146,7 +146,7 @@ class ProductResource(Resource):
     @api.doc('update_products')
     @api.response(404, 'Product not found')
     @api.response(400, 'The posted Product data was not valid')
-    @api.expect(product_model)
+    @api.expect(create_model)
     @api.marshal_with(product_model)
     def put(self, product_id):
         """
@@ -170,6 +170,7 @@ class ProductResource(Resource):
     #------------------------------------------------------------------
     @api.doc('delete_products')
     @api.response(204, 'Product deleted')
+    @api.response(404, 'Product was not found')
     def delete(self, product_id):
         """
         Delete a Product
@@ -201,7 +202,7 @@ class ProductCollection(Resource):
     @api.response(200, 'Listed all products')
     @api.marshal_list_with(product_model)
     def get(self):
-        """ Returns all of the Products """
+        """ List Products """
         app.logger.info('Request to list Products...')
         products = []
         args = product_args.parse_args()
@@ -215,8 +216,8 @@ class ProductCollection(Resource):
             app.logger.info('Returning unfiltered list.')
             products = Product.all()
 
-        app.logger.info('[%s] Products returned', len(products))
         results = [product.serialize() for product in products]
+        app.logger.info('[%s] Products returned', len(results))
         return results, status.HTTP_200_OK
 
 
@@ -271,6 +272,7 @@ class ProductCollection(Resource):
 class PurchaseResource(Resource):
     """ Purchase actions on a Product """
     @api.doc('purchase_products')
+    @api.response(200, 'Success')
     @api.response(404, 'Product not found')
     @api.response(409, 'The Product is out of stock')
     def put(self, product_id):
