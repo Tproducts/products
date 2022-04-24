@@ -18,7 +18,7 @@ from sqlalchemy import null
 from werkzeug.exceptions import NotFound
 from service.models import Product, DataValidationError, db, DatabaseConnectionError
 from service import app
-from .factories import ProductFactory
+from tests.factories import ProductFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"

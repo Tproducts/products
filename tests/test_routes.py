@@ -16,7 +16,8 @@ import unittest
 from service.utils import status  # HTTP Status Codes
 from service.models import db, init_db
 from service.routes import app
-from .factories import ProductFactory
+from tests.factories import ProductFactory
+from service.models import Product
 
 
 # Disable all but critical errors during normal test run
@@ -27,6 +28,7 @@ logging.disable(logging.CRITICAL)
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
+
 BASE_URL = "/products" # change
 CONTENT_TYPE_JSON = "application/json"
 
@@ -107,6 +109,7 @@ class TestProductServer(unittest.TestCase):
 
     def test_get_product_with_name(self):
         test_product = ProductFactory()
+        # test_product = Product(name="Xiaomi", category="Phone", description="this is test product", price=1099, stock=5)
         logging.debug(test_product)
         resp = self.app.post(
             BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
@@ -209,7 +212,6 @@ class TestProductServer(unittest.TestCase):
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
-        
 
     def test_delete_product(self):
         """Delete a Product"""
@@ -241,7 +243,7 @@ class TestProductServer(unittest.TestCase):
         """ Create a Product with bad available data"""
         test_product = ProductFactory()
         logging.debug(test_product)
-        # change available to a string
+        # change price to a string
         test_product.price = "dollar"
         resp = self.app.post(
             BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
