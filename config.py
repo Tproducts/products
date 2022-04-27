@@ -8,8 +8,14 @@ import logging
 # Get configuration from environment
 DATABASE_URI = os.getenv(
     "DATABASE_URI",
-    "postgresql://erctqdwo:QaIf8yiJCysBBNG633pjtU7fJL5267A1@salt.db.elephantsql.com/erctqdwo"
+    "postgres://postgres:postgres@localhost:5432/postgres"
+    # "postgresql://erctqdwo:QaIf8yiJCysBBNG633pjtU7fJL5267A1@salt.db.elephantsql.com/erctqdwo"
 )
+
+# Override if running in Cloud Foundry
+if "VCAP_SERVICES" in os.environ:
+    vcap = json.loads(os.environ["VCAP_SERVICES"])
+    DATABASE_URI = vcap["user-provided"][0]["credentials"]["url"]
 
 # Configure SQLAlchemy
 SQLALCHEMY_DATABASE_URI = DATABASE_URI

@@ -54,7 +54,7 @@ class Product(db.Model):
     ##################################################
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
-    category = db.Column(db.String(63))
+    category = db.Column(db.String(63), nullable=False)
     price = db.Column(db.Integer, nullable=False, default=100)
     stock = db.Column(db.Integer, nullable=False)
     description = db.Column(db.String(128))

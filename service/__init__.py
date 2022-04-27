@@ -10,11 +10,12 @@ from flask import Flask
 
 # Create Flask application
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 app.config.from_object("config")
 
 # Import the routes After the Flask app is created
 from service import routes, models
-from .utils import error_handlers
+# from .utils import error_handlers
 
 # Set up logging for production
 print("Setting up logging for {}...".format(__name__))
