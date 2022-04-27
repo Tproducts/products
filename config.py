@@ -15,7 +15,7 @@ DATABASE_URI = os.getenv(
 # Override if running in Cloud Foundry
 if "VCAP_SERVICES" in os.environ:
     vcap = json.loads(os.environ["VCAP_SERVICES"])
-    DATABASE_URI = vcap["user-provided"][0]["credentials"]
+    DATABASE_URI = vcap["user-provided"][0]["credentials"]["url"]
 
 # Configure SQLAlchemy
 SQLALCHEMY_DATABASE_URI = DATABASE_URI
