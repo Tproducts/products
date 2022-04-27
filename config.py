@@ -16,7 +16,7 @@ DATABASE_URI = os.getenv(
 if "VCAP_SERVICES" in os.environ:
     vcap = json.loads(os.environ["VCAP_SERVICES"])
     url = vcap["user-provided"][0]["credentials"]["url"]
-    DATABASE_URI = {"DATABASE_URI", url}
+    DATABASE_URI = os.getenv("DATABASE_URI", url)
 
 print(DATABASE_URI)
 
