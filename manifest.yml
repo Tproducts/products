@@ -1,16 +1,15 @@
 ---
-# This manifest deploys a Python Flask application with a Cloudant database
-# To change the hostname deploy with:
-#   cf push "${CF_APP}" -n <new-hostname>
+# This manifest deploys a Python Flask application with a PostgreSQL database
 applications:
-- name: nyu-products-service-sp2203
+- name: nyu-product-service-sp2203
   path: .
   instances: 1
   memory: 128M
-  hostname: nyu-products-service-sp2203
-  domain: us-south.cf.appdomain.cloud
+  routes:
+  - route: nyu-product-service-sp2203.us-south.cf.appdomain.cloud
   disk_quota: 1024M
-  buildpack: python_buildpack
+  buildpacks: 
+  - python_buildpack
   timeout: 180
   services:
   - ElephantSQL
