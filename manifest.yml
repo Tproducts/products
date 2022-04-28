@@ -1,12 +1,12 @@
 ---
 # This manifest deploys a Python Flask application with a PostgreSQL database
 applications:
-- name: NYU-DevOps-Products
+- name: nyu-product-service-sp2203
   path: .
   instances: 1
   memory: 128M
   routes:
-  - route: NYU-DevOps-Products.us-south.cf.appdomain.cloud
+  - route: nyu-product-service-sp2203.us-south.cf.appdomain.cloud
   disk_quota: 1024M
   buildpacks: 
   - python_buildpack
