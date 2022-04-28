@@ -5,7 +5,6 @@ import os
 import json
 import logging
 
-
 # Get configuration from environment
 DATABASE_URI = os.getenv(
     "DATABASE_URI",
@@ -16,8 +15,6 @@ DATABASE_URI = os.getenv(
 if 'VCAP_SERVICES' in os.environ:
     vcap = json.loads(os.environ['VCAP_SERVICES'])
     DATABASE_URI = vcap['user-provided'][0]['credentials']['url']
-
-print(DATABASE_URI)
 
 # Configure SQLAlchemy
 SQLALCHEMY_DATABASE_URI = DATABASE_URI
