@@ -1,4 +1,4 @@
-# Product Team Readme file
+# Product Team
 
 [![Build Status](https://github.com/Tproducts/products/workflows/TDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
 [![Build Status](https://github.com/Tproducts/products/workflows/BDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
