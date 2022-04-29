@@ -41,7 +41,7 @@ Hints: checkout the detail in chapter 3 ppt
 
 ## The main skeleton of product service
 
-Test case can be ran with:
+TDD test cases can be ran with:
 
 ```
 nosetests
