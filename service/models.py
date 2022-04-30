@@ -206,20 +206,6 @@ class Product(db.Model):
         return cls.query.get_or_404(product_id)
 
     @classmethod
-    def find_by_id(cls, id: str) -> list:
-        """Returns all Products with the given name
-
-        :param name: the name of the Products you want to match
-        :type name: str
-
-        :return: a collection of Products with that name
-        :type: list
-
-        """
-        logger.info("Processing name query for %s ...", id)
-        return cls.query.filter(cls.id == id)
-
-    @classmethod
     def find_by_name(cls, name: str) -> list:
         """Returns all Products with the given name
 

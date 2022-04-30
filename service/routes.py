@@ -207,10 +207,9 @@ class ProductCollection(Resource):
         app.logger.info('Request to list Products...')
         products = []
         args = product_args.parse_args()
-        app.logger.info('args are : ', args)
         if args.get('id'):
             app.logger.error('Filtering by id: %s', args['id'])
-            products = Product.find_by_id(int(args['id']))
+            products = [Product.find(int(args['id']))]
         elif args.get('name'):
             app.logger.info('Filtering by name: %s', args['name'])
             products = Product.find_by_name(args['name'])
