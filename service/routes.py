@@ -78,6 +78,7 @@ product_model = api.inherit(
 
 # query string arguments
 product_args = reqparse.RequestParser()
+product_args.add_argument('id', type=int, required=False, help='List Products by name')
 product_args.add_argument('name', type=str, required=False, help='List Products by name')
 product_args.add_argument('category', type=str, required=False, help='List Products by category')
 
@@ -206,10 +207,14 @@ class ProductCollection(Resource):
         app.logger.info('Request to list Products...')
         products = []
         args = product_args.parse_args()
-        if args['name']:
+        app.logger.info('args are : ', args)
+        if args.get('id'):
+            app.logger.error('Filtering by id: %s', args['id'])
+            products = Product.find_by_id(int(args['id']))
+        elif args.get('name'):
             app.logger.info('Filtering by name: %s', args['name'])
             products = Product.find_by_name(args['name'])
-        elif args['category']:
+        elif args.get('category'):
             app.logger.info('Filtering by category: %s', args['category'])
             products = Product.find_by_category(args['category'])
         else:
