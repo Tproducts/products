@@ -131,7 +131,29 @@ class TestProductServer(unittest.TestCase):
         self.assertEqual(data[0]["description"], test_product['description'])
         self.assertEqual(data[0]["price"], test_product['price'])
         self.assertEqual(data[0]["stock"], test_product['stock'])
+    
+    def test_get_product_with_id(self):
+        """Query Products by id"""
+        test_product = ProductFactory()
+        logging.debug(test_product)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
 
+        test_product = resp.get_json()
+
+        resp = self.app.get(
+            BASE_URL,
+            query_string="id={}".format(test_product['id'])
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data[0]["name"], test_product['name'])
+        self.assertEqual(data[0]["category"], test_product['category'])
+        self.assertEqual(data[0]["description"], test_product['description'])
+        self.assertEqual(data[0]["price"], test_product['price'])
+        self.assertEqual(data[0]["stock"], test_product['stock'])
 
     def test_get_product_with_category(self):
         """Query Products by category"""
@@ -333,3 +355,23 @@ class TestProductServer(unittest.TestCase):
             content_type=CONTENT_TYPE_JSON,
         )
         self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
+
+    def test_purchase_product_invalid_id(self):
+        """Purchase a product whose id doesn't exist."""
+        # create a product to purchase
+        test_product = Product(name="Samsung", category="Phone", description="Test for purchase", price=999, stock=0)
+        resp = self.app.post(
+            BASE_URL, json=test_product.serialize(), content_type=CONTENT_TYPE_JSON
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # purchase the product
+        new_product = resp.get_json()
+        id = new_product["id"]
+        logging.debug(new_product)
+        resp = self.app.put(
+            "/products/{}/purchase".format(int(new_product["id"] + 100)),
+            json=new_product,
+            content_type=CONTENT_TYPE_JSON,
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
