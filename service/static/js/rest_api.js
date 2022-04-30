@@ -18,7 +18,6 @@ $(function () {
     function clear_form_data() {
         $("#product_name").val("");
         $("#product_category").val("");
-        // $("#product_available").val("");
         $("#product_price").val("");
         $("#product_stock").val("");
         $("#product_description").val("");
@@ -173,6 +172,33 @@ $(function () {
     });
 
     // ****************************************
+    // Purchase a Product
+    // ****************************************
+    $("#purchase-btn").click(function() {
+        let product_id = $("#product_id").val();
+
+        $("#flash_message").empty();
+        
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/products/${product_id}/purchase`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+
+    // ****************************************
     // Clear the form
     // ****************************************
 
@@ -187,23 +213,23 @@ $(function () {
     // ****************************************
 
     $("#search-btn").click(function () {
-
+        let id        = $("#product_id").val();
         let name      = $("#product_name").val();
         let category  = $("#product_category").val();
-        // let available = $("#product_available").val() == "true";
 
-        let queryString = ""
+        let params = []
 
+        if (id) {
+            params.push('id=' + id);
+        }
         if (name) {
-            queryString += 'name=' + name
+            params.push('name=' + name);
         }
         if (category) {
-            if (queryString.length > 0) {
-                queryString += '&category=' + category
-            } else {
-                queryString += 'category=' + category
-            }
+            params.push('category=' + category);
         }
+        let queryString = params.join("&");
+        // alert(queryString);
 
         $("#flash_message").empty();
 
