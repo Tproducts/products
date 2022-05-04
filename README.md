@@ -4,7 +4,7 @@
 [![Build Status](https://github.com/Tproducts/products/workflows/BDD%20Tests/badge.svg)](https://github.com/Tproducts/products/actions)
 [![codecov.io](https://codecov.io/github/Tproducts/products/coverage.svg?branch=main)](https://codecov.io/github/Tproducts/products?branch=main)
 ![](https://img.shields.io/badge/language-Python-green.svg)
-[![Open in Remote - Containers](https://img.shields.io/static/v1?label=Cloud%20-%20Service&message=Open&color=blue&logo=visualstudiocode)](https://nyu-product-service-sp2203.us-south.cf.appdomain.cloud/)
+[![Open in Remote - Containers](https://img.shields.io/static/v1?label=Cloud%20Service&message=Open&color=blue&logo=visualstudiocode)](https://nyu-product-service-sp2203-prod.us-south.cf.appdomain.cloud/)
 
 ## The Roles of our Scrum team
 
